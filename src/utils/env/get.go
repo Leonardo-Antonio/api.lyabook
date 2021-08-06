@@ -21,7 +21,7 @@ func GetEnv() {
 			UrlMongo:  os.Getenv("URL_MONGO"),
 			DBName:    os.Getenv("DB_NAME"),
 			SecretKey: os.Getenv("SECRET_KEY"),
-			Port:      os.Getenv("PORT"),
+			Port:      ":" + os.Getenv("PORT"),
 		}
 	})
 }
