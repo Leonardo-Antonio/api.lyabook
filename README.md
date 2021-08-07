@@ -45,3 +45,17 @@ openssl rsa -in app.rsa -pubout > app.rsa.pub
 }
 ```
 ---
+##### LogIn - Ingresar
+```json
+- http://localhost:8080/api/v1/users/log-in/dni
+{
+    "password": "cmcx100pre",
+    "dni": "71062235" 
+}
+- http://localhost:8080/api/v1/users/log-in/email
+{
+    "password": "cmcx100pre",
+    "email": "example@example.com" 
+}
+```
+---
