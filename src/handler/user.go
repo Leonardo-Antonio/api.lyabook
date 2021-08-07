@@ -4,6 +4,7 @@ import (
 	"errors"
 	"net/http"
 
+	"github.com/Leonardo-Antonio/api.lyabook/src/autorization"
 	"github.com/Leonardo-Antonio/api.lyabook/src/entity"
 	"github.com/Leonardo-Antonio/api.lyabook/src/helper"
 	"github.com/Leonardo-Antonio/api.lyabook/src/model"
@@ -53,11 +54,7 @@ func (u *user) SignUp(ctx echo.Context) error {
 		}
 
 		if len(errs) != 0 {
-			var errMesssage []string
-			for i := 0; i < len(errs); i++ {
-				errMesssage = append(errMesssage, errs[i].Error())
-			}
-			return response.New(ctx, http.StatusBadRequest, errMesssage, true, nil)
+			return response.New(ctx, http.StatusBadRequest, helper.ErrToString(errs), true, nil)
 		}
 
 		if err := helper.GetDniReniec(&userData); err != nil {
@@ -73,11 +70,7 @@ func (u *user) SignUp(ctx echo.Context) error {
 		}
 
 		if len(errs) != 0 {
-			var errMesssage []string
-			for i := 0; i < len(errs); i++ {
-				errMesssage = append(errMesssage, errs[i].Error())
-			}
-			return response.New(ctx, http.StatusBadRequest, errMesssage, true, nil)
+			return response.New(ctx, http.StatusBadRequest, helper.ErrToString(errs), true, nil)
 		}
 	default:
 		return response.New(
@@ -106,4 +99,87 @@ func (u *user) SignUp(ctx echo.Context) error {
 		"el usuario <"+userData.Dni+"> fue creado correctamente",
 		false, result,
 	)
+}
+
+func (u *user) LogIn(ctx echo.Context) error {
+	flag := ctx.Param("type")
+
+	var credentials entity.User
+	if err := ctx.Bind(&credentials); err != nil {
+		return response.New(ctx, http.StatusBadRequest, "la estructura ingresada no es valida", true, nil)
+	}
+
+	errs := validmor.ValidateStruct(credentials)
+
+	var err error
+	var dataUser entity.User
+	switch flag {
+	case enum.TypeLogin.Dni:
+		if err := valid.Dni(credentials.Dni); err != nil {
+			errs = append(errs, err)
+		}
+
+		if len(errs) != 0 {
+			return response.New(ctx, http.StatusBadRequest, helper.ErrToString(errs), true, nil)
+		}
+
+		dataUser, err = u.storage.Find(&credentials, enum.TypeLogin.Dni)
+		if err != nil {
+			if errors.Is(err, mongo.ErrNoDocuments) {
+				return response.New(
+					ctx, http.StatusBadRequest,
+					"el usuaio <"+credentials.Dni+"> no existe o no ingreso correctamente su credenciales",
+					true, nil,
+				)
+			}
+			return response.New(ctx, http.StatusInternalServerError, err.Error(), true, nil)
+		}
+
+	case enum.TypeLogin.Email:
+		if err := valid.Email(&credentials); err != nil {
+			errs = append(errs, err)
+		}
+
+		if len(errs) != 0 {
+			return response.New(ctx, http.StatusBadRequest, helper.ErrToString(errs), true, nil)
+		}
+
+		dataUser, err = u.storage.Find(&credentials, enum.TypeLogin.Email)
+		if err != nil {
+			if errors.Is(err, errores.ErrInvalidPassword) {
+				return response.New(
+					ctx, http.StatusBadRequest,
+					"el password <"+credentials.Password+"> no es correcto o el usuario no existe",
+					true, nil,
+				)
+			}
+			if errors.Is(err, mongo.ErrNoDocuments) {
+				return response.New(
+					ctx, http.StatusBadRequest,
+					"el usuaio <"+credentials.Email+"> no existe o no ingreso correctamente su credenciales",
+					true, nil,
+				)
+			}
+			return response.New(ctx, http.StatusInternalServerError, err.Error(), true, nil)
+		}
+
+	default:
+		return response.
+			New(
+				ctx, http.StatusBadRequest,
+				"el tipo de login no es valido, pruebe con <email, dni>",
+				true, nil,
+			)
+	}
+
+	token, err := autorization.GenerateToken(&dataUser)
+	if err != nil {
+		response.New(ctx, http.StatusInternalServerError, err.Error(), true, nil)
+	}
+
+	resp := make(map[string]interface{}, 2)
+	resp["token"] = token
+	resp["user"] = dataUser
+
+	return response.New(ctx, http.StatusOK, "ok", false, resp)
 }

@@ -1,5 +1,14 @@
 # API RESTful for Mor - LyaBook
+### Kill ports
+```shell
+lsof -i:8080
+# out console
+main    286077  leo    9u  IPv6 1398322      0t0  TCP *:http-alt (LISTEN)
+main    286077  leo   11u  IPv6 1395667      0t0  TCP localhost:http-alt->localhost:40034 (CLOSE_WAIT)
+# end out
 
+kill -9 286077
+```
 ### Generate certificates
 > can be created inside a folder ```/certificate```
 - private

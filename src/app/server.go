@@ -3,6 +3,7 @@ package app
 import (
 	"log"
 
+	"github.com/Leonardo-Antonio/api.lyabook/src/autorization"
 	"github.com/Leonardo-Antonio/api.lyabook/src/dbutil"
 	"github.com/Leonardo-Antonio/api.lyabook/src/model"
 	"github.com/Leonardo-Antonio/api.lyabook/src/router"
@@ -30,6 +31,7 @@ func (s *server) Middlewares() {
 }
 
 func (s *server) Configs() {
+	s.loadCertificates()
 	if err := godotenv.Load(); err != nil {
 		log.Fatalln(err)
 	}
@@ -37,6 +39,10 @@ func (s *server) Configs() {
 
 	key.Password = gobcrypt.CreateHash(env.Data.SecretKey)
 	validmor.Errors(validmor.ERR_ES)
+}
+
+func (s *server) loadCertificates() {
+	autorization.LoadFiles()
 }
 
 func (s *server) Routers() {
