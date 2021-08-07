@@ -5,16 +5,16 @@ import (
 )
 
 type response struct {
-	MessageType string      `json:"message_type,omitempty" xml:"message_type,omitempty"`
-	Message     string      `json:"message,omitempty" xml:"message,omitempty"`
-	Error       bool        `json:"error,omitempty" xml:"error,omitempty"`
-	Data        interface{} `json:"data,omitempty" xml:"data,omitempty"`
+	MessageType string      `json:"message_type,omitempty" xml:"message_type,omitempty" yaml:"message_type,omitempty"`
+	Message     interface{} `json:"message,omitempty" xml:"message,omitempty" yaml:"message,omitempty"`
+	Error       bool        `json:"error,omitempty" xml:"error,omitempty" yaml:"error,omitempty"`
+	Data        interface{} `json:"data,omitempty" xml:"data,omitempty" yaml:"data,omitempty"`
 }
 
 func New(
 	ctx echo.Context,
 	codeHttp int,
-	message string,
+	message interface{},
 	err bool,
 	data interface{},
 ) error {

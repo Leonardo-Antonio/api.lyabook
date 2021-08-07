@@ -7,7 +7,13 @@ import (
 
 type (
 	env struct {
-		BaseUrl, UrlMongo, DBName, SecretKey, Port string
+		BaseUrl,
+		UrlMongo,
+		DBName,
+		SecretKey,
+		ApiReniecDni,
+		TokenReniecDni,
+		Port string
 	}
 )
 
@@ -17,11 +23,13 @@ var Data *env
 func GetEnv() {
 	once.Do(func() {
 		Data = &env{
-			BaseUrl:   os.Getenv("BASE_URI"),
-			UrlMongo:  os.Getenv("URL_MONGO"),
-			DBName:    os.Getenv("DB_NAME"),
-			SecretKey: os.Getenv("SECRET_KEY"),
-			Port:      ":" + os.Getenv("PORT"),
+			BaseUrl:        os.Getenv("BASE_URI"),
+			UrlMongo:       os.Getenv("URL_MONGO"),
+			DBName:         os.Getenv("DB_NAME"),
+			SecretKey:      os.Getenv("SECRET_KEY"),
+			Port:           ":" + os.Getenv("PORT"),
+			ApiReniecDni:   os.Getenv("API_RENIEC_DNI"),
+			TokenReniecDni: os.Getenv("TOKEN_API_RENIEC_DNI"),
 		}
 	})
 }

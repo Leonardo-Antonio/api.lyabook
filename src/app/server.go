@@ -3,6 +3,8 @@ package app
 import (
 	"log"
 
+	"github.com/Leonardo-Antonio/api.lyabook/src/dbutil"
+	"github.com/Leonardo-Antonio/api.lyabook/src/model"
 	"github.com/Leonardo-Antonio/api.lyabook/src/router"
 	"github.com/Leonardo-Antonio/api.lyabook/src/utils/env"
 	"github.com/Leonardo-Antonio/api.lyabook/src/utils/key"
@@ -38,7 +40,9 @@ func (s *server) Configs() {
 }
 
 func (s *server) Routers() {
+	db := dbutil.GetConnection()
 	router.Documentation(s.app)
+	router.User(model.NewUser(db), s.app)
 }
 
 func (s *server) Listeing() {

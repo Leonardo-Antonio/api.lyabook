@@ -16,6 +16,11 @@ type (
 	user struct {
 		collection *mongo.Collection
 	}
+
+	IUser interface {
+		Insert(user *entity.User) (*mongo.InsertOneResult, error)
+		Find(credentialsUser *entity.User, flag string) (*entity.User, error)
+	}
 )
 
 func NewUser(db *mongo.Database) *user {
