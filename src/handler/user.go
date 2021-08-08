@@ -19,6 +19,7 @@ import (
 	"github.com/Leonardo-Antonio/validmor"
 	"github.com/labstack/echo/v4"
 	"github.com/twharmon/gouid"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
 )
 
@@ -238,4 +239,58 @@ func (u *user) VerifyAccount(ctx echo.Context) error {
 		"se valido y creo correctamente su cuenta <"+userData.Email+">",
 		false, nil,
 	)
+}
+
+func (u *user) Update(ctx echo.Context) error {
+	id, err := primitive.ObjectIDFromHex(ctx.Param("id"))
+	if err != nil {
+		return response.New(
+			ctx, http.StatusBadRequest,
+			"el id ingresado no es valido",
+			true, nil,
+		)
+	}
+
+	var user entity.User
+	if err := ctx.Bind(&user); err != nil {
+		return response.New(
+			ctx, http.StatusBadRequest,
+			"la estructura que ingreso no es correcta",
+			true, nil,
+		)
+	}
+
+	user.Id = id
+
+	errs := validmor.ValidateStruct(user)
+	if user.Id.IsZero() {
+		errs = append(errs, errors.New("el id no debe ser nulo ni vacio, _id es un campo requerido"))
+	}
+
+	if len(errs) != 0 {
+		return response.New(
+			ctx, http.StatusBadRequest,
+			helper.ErrToString(errs),
+			true, nil,
+		)
+	}
+
+	u.validateFieldsNoUpdated(&user)
+	result, err := u.storage.Update(&user)
+	if err != nil {
+		return response.New(
+			ctx, http.StatusBadRequest,
+			err.Error(),
+			true, nil,
+		)
+	}
+
+	return response.New(ctx, http.StatusOK, "se acualizo correctamente", false, result)
+}
+
+func (u *user) validateFieldsNoUpdated(user *entity.User) {
+	user.Email = ""
+	user.Rol = ""
+	user.Dni = ""
+	user.VerificationCode = ""
 }

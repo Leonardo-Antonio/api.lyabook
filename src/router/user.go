@@ -14,4 +14,5 @@ func User(storage model.IUser, app *echo.Echo) {
 	group.POST("/sign-up/:type", user.SignUp)
 	group.POST("/log-in/:type", user.LogIn)
 	group.POST("/verify", user.VerifyAccount)
+	group.PUT("/:id", user.Update)
 }
