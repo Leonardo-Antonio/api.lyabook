@@ -27,7 +27,7 @@ openssl rsa -in app.rsa -pubout > app.rsa.pub
 - Client
 
 ---
-##### SignUp - Crear cuenta
+##### SignUp - Crear cuenta [POST]
 ```json
 - http://localhost:8080/api/v1/users/sign-up/dni
 {
@@ -45,7 +45,7 @@ openssl rsa -in app.rsa -pubout > app.rsa.pub
 }
 ```
 
-##### Verify - Verificar cuenta
+##### Verify - Verificar cuenta [POST]
 ```json
 - http://localhost:8080/api/v1/users/verify
 {
@@ -55,7 +55,7 @@ openssl rsa -in app.rsa -pubout > app.rsa.pub
 ```
 
 ---
-##### LogIn - Ingresar
+##### LogIn - Ingresar [POST]
 ```json
 - http://localhost:8080/api/v1/users/log-in/dni
 {
@@ -66,6 +66,16 @@ openssl rsa -in app.rsa -pubout > app.rsa.pub
 {
     "password": "cmcx100pre",
     "email": "example@example.com" 
+}
+```
+---
+##### Update - Actualizar usuario [PUT]
+```json
+- http://localhost:8080/api/v1/users/:id 
+{
+    "name": "Alexandra",
+    "last_name": "Navarro",
+    "password": "cmcx100pre",
 }
 ```
 ---
