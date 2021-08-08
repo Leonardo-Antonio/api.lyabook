@@ -44,6 +44,16 @@ openssl rsa -in app.rsa -pubout > app.rsa.pub
     "email": "example@example.com" 
 }
 ```
+
+##### Verify - Verificar cuenta
+```json
+- http://localhost:8080/api/v1/users/verify
+{
+    "verification_code": "VQ25IO8X",
+    "email": "leo2001.nl08@gmail.com"
+}
+```
+
 ---
 ##### LogIn - Ingresar
 ```json
