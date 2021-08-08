@@ -13,10 +13,12 @@ import (
 	"github.com/Leonardo-Antonio/api.lyabook/src/utils/formatting"
 	"github.com/Leonardo-Antonio/api.lyabook/src/utils/key"
 	"github.com/Leonardo-Antonio/api.lyabook/src/utils/response"
+	"github.com/Leonardo-Antonio/api.lyabook/src/utils/send"
 	"github.com/Leonardo-Antonio/api.lyabook/src/utils/valid"
 	"github.com/Leonardo-Antonio/gobcrypt/gobcrypt"
 	"github.com/Leonardo-Antonio/validmor"
 	"github.com/labstack/echo/v4"
+	"github.com/twharmon/gouid"
 	"go.mongodb.org/mongo-driver/mongo"
 )
 
@@ -63,6 +65,7 @@ func (u *user) SignUp(ctx echo.Context) error {
 			}
 			return response.New(ctx, http.StatusInternalServerError, err.Error(), true, nil)
 		}
+		userData.Active = true
 
 	case enum.TypeLogin.Email:
 		if err := valid.Email(&userData); err != nil {
@@ -72,6 +75,9 @@ func (u *user) SignUp(ctx echo.Context) error {
 		if len(errs) != 0 {
 			return response.New(ctx, http.StatusBadRequest, helper.ErrToString(errs), true, nil)
 		}
+		userData.Active = false
+		userData.VerificationCode = gouid.String(8, gouid.UpperCaseAlphaNum)
+
 	default:
 		return response.New(
 			ctx, http.StatusBadRequest,
@@ -95,8 +101,18 @@ func (u *user) SignUp(ctx echo.Context) error {
 		}
 		return response.New(ctx, http.StatusInternalServerError, err.Error(), true, nil)
 	}
+
+	resp := "el usuario <" + userData.Dni + "> fue creado correctamente"
+	if flag == enum.TypeLogin.Email {
+		resp = "el usuario <" + userData.Email + "> fue creado correctamente"
+
+		if err := send.CodVerification(userData); err != nil {
+			return response.New(ctx, http.StatusInternalServerError, err.Error(), true, nil)
+		}
+	}
+
 	return response.New(ctx, http.StatusCreated,
-		"el usuario <"+userData.Dni+"> fue creado correctamente",
+		resp,
 		false, result,
 	)
 }
@@ -182,4 +198,44 @@ func (u *user) LogIn(ctx echo.Context) error {
 	resp["user"] = dataUser
 
 	return response.New(ctx, http.StatusOK, "ok", false, resp)
+}
+
+func (u *user) VerifyAccount(ctx echo.Context) error {
+	var userData entity.User
+	if err := ctx.Bind(&userData); err != nil {
+		return response.New(ctx, http.StatusBadRequest, err.Error(), true, nil)
+	}
+
+	if err := valid.Email(&userData); err != nil {
+		return response.New(ctx, http.StatusBadRequest, err.Error(), true, nil)
+	}
+
+	if len(userData.VerificationCode) != 8 {
+		return response.New(ctx, http.StatusBadRequest, "el codigo no es valido", true, nil)
+	}
+
+	data, err := u.storage.VerifyAccount(
+		userData.Email,
+		userData.VerificationCode,
+	)
+	if err != nil {
+		if errors.Is(err, mongo.ErrNoDocuments) {
+			return response.New(
+				ctx, http.StatusBadRequest,
+				"el código ingresado no es valido <"+userData.VerificationCode+">",
+				true, nil,
+			)
+		}
+		return response.New(ctx, http.StatusBadRequest, err.Error(), true, nil)
+	}
+
+	if err := send.EmailSignUp(data); err != nil {
+		return response.New(ctx, http.StatusInternalServerError, err.Error(), true, nil)
+	}
+
+	return response.New(
+		ctx, http.StatusCreated,
+		"se valido y creo correctamente su cuenta <"+userData.Email+">",
+		false, nil,
+	)
 }

@@ -13,4 +13,5 @@ func User(storage model.IUser, app *echo.Echo) {
 	group := app.Group(env.Data.BaseUrl + "/users")
 	group.POST("/sign-up/:type", user.SignUp)
 	group.POST("/log-in/:type", user.LogIn)
+	group.POST("/verify", user.VerifyAccount)
 }
