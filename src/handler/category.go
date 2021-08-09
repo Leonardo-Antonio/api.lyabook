@@ -12,6 +12,7 @@ import (
 	"github.com/Leonardo-Antonio/validmor"
 	"github.com/labstack/echo/v4"
 	"go.mongodb.org/mongo-driver/bson/primitive"
+	"go.mongodb.org/mongo-driver/mongo"
 )
 
 type category struct {
@@ -61,6 +62,13 @@ func (c *category) Add(ctx echo.Context) error {
 
 	result, err := c.storage.Insert(&category)
 	if err != nil {
+		if mongo.IsDuplicateKeyError(err) {
+			return response.New(
+				ctx, http.StatusBadRequest,
+				"la categoria que quiere crear ya existe",
+				true, nil,
+			)
+		}
 		return response.New(
 			ctx, http.StatusBadRequest,
 			err.Error(),
@@ -123,6 +131,13 @@ func (c *category) Update(ctx echo.Context) error {
 
 	result, err := c.storage.Update(&category)
 	if err != nil {
+		if mongo.IsDuplicateKeyError(err) {
+			return response.New(
+				ctx, http.StatusBadRequest,
+				"la categoria que quiere crear ya existe",
+				true, nil,
+			)
+		}
 		return response.New(
 			ctx, http.StatusInternalServerError,
 			err.Error(),

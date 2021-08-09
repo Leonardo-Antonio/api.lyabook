@@ -23,5 +23,6 @@ func GetConnection() (db *mongo.Database) {
 	db = client.Database(env.Data.DBName)
 	fildsUnique := NewCollectionIndex(db)
 	fildsUnique.createIndexUser()
+	fildsUnique.createIndexCategory()
 	return
 }
