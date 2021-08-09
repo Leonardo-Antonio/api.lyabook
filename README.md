@@ -89,7 +89,7 @@ openssl rsa -in app.rsa -pubout > app.rsa.pub
     "name": "terror nocturno"
 }
 ```
-#### Create [PUT]
+#### Update [PUT]
 ```json
 - http://localhost:8080/api/v1/category/:id
 {
@@ -97,3 +97,75 @@ openssl rsa -in app.rsa -pubout > app.rsa.pub
 }
 ```
 ---
+
+
+## Book
+
+#### Create [POST]
+```json
+// crea libro digital 
+- http://localhost:8080/api/v1/books/d
+{
+    "name": "Misterio, una pasión",
+    "author": "Aldo Miashiro",
+    "editorial": "Macro",
+    "price_current": 150.55,
+    "description": "Misterio, una historia basada en hechos reales de la creación de la trinchera norte",
+    "type": {
+        "digital": {
+            "format": "asds",
+            "details": ["dsdsdsd"]
+        }
+    },
+    "categories": ["61101d22b88c55b02dbc5f2c"],
+    "src": "https://imge.com"
+}
+
+
+
+// crea libro fisico 
+- http://localhost:8080/api/v1/books/f
+{
+    "name": "Misterio, una pasión",
+    "author": "Aldo Miashiro",
+    "editorial": "Macro",
+    "price_current": 150.55,
+    "description": "Misterio, una historia basada en hechos reales de la creación de la trinchera norte",
+    "type": {
+        "fisico": {
+            "details": ["ssdsa"],
+            "log": "151525411",
+            "lat": "-45854514515",
+            "stock": 4
+        }
+    },
+    "categories": ["61101d22b88c55b02dbc5f2c"],
+    "src": "https://imge.com"
+}
+
+
+
+// crea libro fisico y digital
+- http://localhost:8080/api/v1/books/df
+{
+    "name": "Misterio, una pasión",
+    "author": "Aldo Miashiro",
+    "editorial": "Macro",
+    "price_current": 150.55,
+    "description": "Misterio, una historia basada en hechos reales de la creación de la trinchera norte",
+    "type": {
+        "digital": {
+            "format": "asds",
+            "details": ["dsdsdsd"]
+        },
+        "fisico": {
+            "details": ["ssdsa"],
+            "log": "151525411",
+            "lat": "-45854514515",
+            "stock": 4
+        }
+    },
+    "categories": ["61101d22b88c55b02dbc5f2c"],
+    "src": "https://imge.com"
+}
+```

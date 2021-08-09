@@ -49,9 +49,6 @@ func (b *book) Digital(format *entity.Format) (errs []error) {
 	if len(format.Digital.Details) == 0 {
 		errs = append(errs, errors.New("el libro debe tener por lo menos un detalle"))
 	}
-	if len(format.Digital.Src) < 5 {
-		errs = append(errs, errors.New("la url de la imagen no es valida"))
-	}
 
 	if len(errs) != 0 {
 		return errs

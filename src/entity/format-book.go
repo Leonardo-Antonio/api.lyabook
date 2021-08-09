@@ -2,7 +2,6 @@ package entity
 
 type Digital struct {
 	Format  string   `bson:"format,omitempty" json:"format,omitempty" xml:"format,omitempty"`
-	Src     string   `bson:"src,omitempty" json:"src,omitempty" xml:"src,omitempty"`
 	Details []string `bson:"details,omitempty" json:"details,omitempty" xml:"details,omitempty"`
 	Active  bool     `bson:"active,omitempty" json:"active,omitempty" xml:"active,omitempty"`
 }
