@@ -79,3 +79,21 @@ openssl rsa -in app.rsa -pubout > app.rsa.pub
 }
 ```
 ---
+
+## Category
+
+#### Create [POST]
+```json
+- http://localhost:8080/api/v1/category
+{
+    "name": "terror nocturno"
+}
+```
+#### Create [PUT]
+```json
+- http://localhost:8080/api/v1/category/:id
+{
+    "name": "terror nocturno"
+}
+```
+---
