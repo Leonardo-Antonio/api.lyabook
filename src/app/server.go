@@ -49,6 +49,7 @@ func (s *server) Routers() {
 	db := dbutil.GetConnection()
 	router.Documentation(s.app)
 	router.User(model.NewUser(db), s.app)
+	router.Category(model.NewCategoty(db), s.app)
 }
 
 func (s *server) Listeing() {
