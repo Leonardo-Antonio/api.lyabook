@@ -84,7 +84,7 @@ openssl rsa -in app.rsa -pubout > app.rsa.pub
 ---
 
 ## Category
-
+> Para usar este endpoint es necesario un token del rol admin que se obtiene en el login
 #### Create [POST]
 ```json
 - http://localhost:8080/api/v1/category
@@ -103,7 +103,7 @@ openssl rsa -in app.rsa -pubout > app.rsa.pub
 
 
 ## Book
-
+> Para usar este endpoint es necesario un token del rol admin que se obtiene en el login
 #### Create [POST] and Update [PUT]
 ```json
 // crea y actualiza libro digital 
@@ -177,6 +177,7 @@ openssl rsa -in app.rsa -pubout > app.rsa.pub
 ```
 
 #### Add Promotion [PATCH]
+> Para usar este endpoint es necesario un token del rol admin que se obtiene en el login
 ```json
 - http://localhost:8080/api/v1/books/promotions/:id
 {
