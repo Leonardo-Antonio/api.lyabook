@@ -101,10 +101,11 @@ openssl rsa -in app.rsa -pubout > app.rsa.pub
 
 ## Book
 
-#### Create [POST]
+#### Create [POST] and Update [PUT]
 ```json
-// crea libro digital 
-- http://localhost:8080/api/v1/books/d
+// crea y actualiza libro digital 
+- http://localhost:8080/api/v1/books/d [POST]
+- http://localhost:8080/api/v1/books/d:id [PUT]
 {
     "name": "Misterio, una pasión",
     "author": "Aldo Miashiro",
@@ -123,8 +124,9 @@ openssl rsa -in app.rsa -pubout > app.rsa.pub
 
 
 
-// crea libro fisico 
-- http://localhost:8080/api/v1/books/f
+// crea y actualiza libro fisico 
+- http://localhost:8080/api/v1/books/f [POST]
+- http://localhost:8080/api/v1/books/f:id [PUT]
 {
     "name": "Misterio, una pasión",
     "author": "Aldo Miashiro",
@@ -145,8 +147,9 @@ openssl rsa -in app.rsa -pubout > app.rsa.pub
 
 
 
-// crea libro fisico y digital
-- http://localhost:8080/api/v1/books/df
+// crea y actualiza libro fisico y digital
+- http://localhost:8080/api/v1/books/df [POST]
+- http://localhost:8080/api/v1/books/df/:id [PUT]
 {
     "name": "Misterio, una pasión",
     "author": "Aldo Miashiro",
@@ -167,5 +170,13 @@ openssl rsa -in app.rsa -pubout > app.rsa.pub
     },
     "categories": ["61101d22b88c55b02dbc5f2c"],
     "src": "https://imge.com"
+}
+```
+
+#### Add Promotion [PATCH]
+```json
+- http://localhost:8080/api/v1/books/promotions/:id
+{
+    "price_current": 55
 }
 ```

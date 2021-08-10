@@ -19,6 +19,7 @@ type (
 	Ibook interface {
 		Insert(book *entity.Book) (*mongo.InsertOneResult, error)
 		Update(book *entity.Book) (*mongo.UpdateResult, error)
+		UpdatePriceCurrent(id primitive.ObjectID, priceCurrent float64) (*mongo.UpdateResult, error)
 	}
 )
 
@@ -56,6 +57,27 @@ func (b *book) Update(book *entity.Book) (*mongo.UpdateResult, error) {
 	result, err := b.collection.UpdateByID(
 		context.TODO(),
 		book.Id,
+		update,
+	)
+
+	if err != nil {
+		return nil, err
+	}
+
+	return result, nil
+}
+
+func (b *book) UpdatePriceCurrent(id primitive.ObjectID, priceCurrent float64) (*mongo.UpdateResult, error) {
+	update := bson.M{
+		"$set": bson.M{
+			"price_current": priceCurrent,
+			"updated_at":    time.Now(),
+		},
+	}
+
+	result, err := b.collection.UpdateByID(
+		context.TODO(),
+		id,
 		update,
 	)
 

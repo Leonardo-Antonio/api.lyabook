@@ -69,7 +69,7 @@ func (b *book) Edit(ctx echo.Context) error {
 	if err != nil {
 		return response.New(
 			ctx, http.StatusBadRequest,
-			"el id <"+id.String()+"> no es valido",
+			"el id <"+ctx.Param("id")+"> no es valido",
 			true, nil)
 	}
 
@@ -111,4 +111,42 @@ func (b *book) Edit(ctx echo.Context) error {
 	}
 
 	return response.New(ctx, http.StatusOK, "el libro <"+book.Name+"> se creo correctamente", false, result)
+}
+
+func (b *book) AddPromotion(ctx echo.Context) error {
+	id, err := primitive.ObjectIDFromHex(ctx.Param("id"))
+	if err != nil {
+		return response.New(
+			ctx, http.StatusBadRequest,
+			"el id <"+id.String()+"> no es valido",
+			true, nil,
+		)
+	}
+	var book entity.Book
+	if err := ctx.Bind(&book); err != nil {
+		return response.New(ctx, http.StatusBadRequest, "la estructura no es valida", true, nil)
+	}
+
+	if book.PriceCurrent < 0 {
+		return response.New(
+			ctx, http.StatusBadRequest,
+			"el precio no debe ser menos a 0",
+			true, nil,
+		)
+	}
+
+	result, err := b.storage.UpdatePriceCurrent(id, book.PriceCurrent)
+	if err != nil {
+		return response.New(
+			ctx, http.StatusInternalServerError,
+			err.Error(),
+			true, nil,
+		)
+	}
+
+	return response.New(
+		ctx, http.StatusOK,
+		"se agrego la nueva promocion del libro",
+		true, result,
+	)
 }
