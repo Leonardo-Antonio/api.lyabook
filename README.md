@@ -27,6 +27,9 @@ openssl rsa -in app.rsa -pubout > app.rsa.pub
 - Client
 
 ---
+
+
+## User
 ##### SignUp - Crear cuenta [POST]
 ```json
 - http://localhost:8080/api/v1/users/sign-up/dni
