@@ -20,6 +20,7 @@ type Book struct {
 	Type         Format               `bson:"type,omitempty" json:"type,omitempty" xml:"type,omitempty"`
 	Categories   []primitive.ObjectID `bson:"categories,omitempty" json:"categories,omitempty" xml:"categories,omitempty" validmor:"required"`
 	Src          string               `bson:"src,omitempty" json:"src,omitempty" xml:"src,omitempty" validmor:"required"`
+	ImagesSrc    []string             `bson:"images_src,omitempty" json:"images_src,omitempty" xml:"images_src,omitempty" validmor:"required"`
 	CreatedAt    time.Time            `bson:"created_at,omitempty" json:"created_at,omitempty" xml:"created_at,omitempty"`
 	UpdatedAt    time.Time            `bson:"updated_at,omitempty" json:"updated_at,omitempty" xml:"updated_at,omitempty"`
 	DeletedAt    time.Time            `bson:"deleted_at,omitempty" json:"deleted_at,omitempty" xml:"deleted_at,omitempty"`

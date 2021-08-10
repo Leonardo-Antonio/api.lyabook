@@ -53,3 +53,21 @@ func (c *collection) createIndexCategory() {
 		log.Fatalln(err)
 	}
 }
+
+func (c *collection) createIndexBook() {
+	_, err := c.db.Collection(enum.Collection.Books).
+		Indexes().
+		CreateOne(
+			context.TODO(),
+			mongo.IndexModel{
+				Keys: bson.D{
+					{Key: "name", Value: 1},
+					{Key: "slug", Value: 1},
+				},
+				Options: options.Index().SetUnique(true),
+			},
+		)
+	if err != nil {
+		log.Fatalln(err)
+	}
+}

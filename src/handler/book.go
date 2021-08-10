@@ -12,6 +12,7 @@ import (
 	"github.com/Leonardo-Antonio/api.lyabook/src/utils/valid"
 	"github.com/Leonardo-Antonio/validmor"
 	"github.com/labstack/echo/v4"
+	"go.mongodb.org/mongo-driver/mongo"
 )
 
 type book struct {
@@ -47,7 +48,14 @@ func (b *book) Create(ctx echo.Context) error {
 	valid.CreateBook(&book)
 
 	result, err := b.storage.Insert(&book)
-	if len(errs) != 0 {
+	if err != nil {
+		if mongo.IsDuplicateKeyError(err) {
+			return response.New(
+				ctx, http.StatusBadRequest,
+				"el nombre del libro <"+book.Name+"> ya existe",
+				true, nil,
+			)
+		}
 		return response.New(ctx, http.StatusInternalServerError, err.Error(), true, nil)
 	}
 
