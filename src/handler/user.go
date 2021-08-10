@@ -4,7 +4,7 @@ import (
 	"errors"
 	"net/http"
 
-	"github.com/Leonardo-Antonio/api.lyabook/src/autorization"
+	"github.com/Leonardo-Antonio/api.lyabook/src/authorization"
 	"github.com/Leonardo-Antonio/api.lyabook/src/entity"
 	"github.com/Leonardo-Antonio/api.lyabook/src/helper"
 	"github.com/Leonardo-Antonio/api.lyabook/src/model"
@@ -189,7 +189,7 @@ func (u *user) LogIn(ctx echo.Context) error {
 			)
 	}
 
-	token, err := autorization.GenerateToken(&dataUser)
+	token, err := authorization.GenerateToken(&dataUser)
 	if err != nil {
 		response.New(ctx, http.StatusInternalServerError, err.Error(), true, nil)
 	}

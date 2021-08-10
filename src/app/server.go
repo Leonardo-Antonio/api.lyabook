@@ -3,7 +3,7 @@ package app
 import (
 	"log"
 
-	"github.com/Leonardo-Antonio/api.lyabook/src/autorization"
+	"github.com/Leonardo-Antonio/api.lyabook/src/authorization"
 	"github.com/Leonardo-Antonio/api.lyabook/src/dbutil"
 	"github.com/Leonardo-Antonio/api.lyabook/src/model"
 	"github.com/Leonardo-Antonio/api.lyabook/src/router"
@@ -42,7 +42,7 @@ func (s *server) Configs() {
 }
 
 func (s *server) loadCertificates() {
-	autorization.LoadFiles()
+	authorization.LoadFiles()
 }
 
 func (s *server) Routers() {

@@ -1,4 +1,4 @@
-package autorization
+package authorization
 
 import (
 	"crypto/rsa"
