@@ -26,10 +26,14 @@ func (b *book) Format(format *entity.Format, slug string) []error {
 		if errs := b.Digital(format); len(errs) != 0 {
 			return errs
 		}
+
+		format.Fisico = entity.Fisico{}
 	case "f":
 		if errs := b.Fisico(format); len(errs) != 0 {
 			return errs
 		}
+
+		format.Digital = entity.Digital{}
 	case "df":
 		if errs := b.Digital(format); len(errs) != 0 {
 			return errs
