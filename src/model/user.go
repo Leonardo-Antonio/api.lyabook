@@ -25,6 +25,7 @@ type (
 		Find(credentialsUser *entity.User, flag string) (entity.User, error)
 		VerifyAccount(email, code string) (entity.User, error)
 		Update(user *entity.User) (*mongo.UpdateResult, error)
+		FindUsersWithEmail() (entity.Users, error)
 	}
 )
 
@@ -129,4 +130,29 @@ func (u *user) Update(user *entity.User) (*mongo.UpdateResult, error) {
 	}
 
 	return result, nil
+}
+
+func (b *user) FindUsersWithEmail() (entity.Users, error) {
+	filter := bson.M{
+		"email": bson.M{
+			"$exists": true,
+		},
+		"active": true,
+	}
+
+	cursor, err := b.collection.Find(
+		context.TODO(), filter,
+	)
+	if err != nil {
+		return nil, err
+	}
+
+	defer cursor.Close(context.TODO())
+
+	var users entity.Users
+	if err := cursor.All(context.TODO(), &users); err != nil {
+		return nil, err
+	}
+
+	return users, nil
 }

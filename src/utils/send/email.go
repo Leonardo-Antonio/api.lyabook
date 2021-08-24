@@ -23,3 +23,20 @@ func send(to, tpl string) error {
 
 	return nil
 }
+
+func sendMany(tpl string, to ...string) error {
+	e := email.NewEmail()
+	e.From = "Leonardo Antonio Nolasco Leyva <" + env.Data.Email + ">"
+	e.To = to
+	e.Subject = "Bienvenid@ a LyaBook"
+	e.HTML = []byte(tpl)
+	if err := e.Send("smtp.gmail.com:587", smtp.PlainAuth(
+		"", env.Data.Email,
+		env.Data.SecretKeyApplicationEmail,
+		"smtp.gmail.com",
+	)); err != nil {
+		return err
+	}
+
+	return nil
+}

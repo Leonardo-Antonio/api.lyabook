@@ -28,6 +28,13 @@ func (a *auth) Admin(f echo.HandlerFunc) echo.HandlerFunc {
 			)
 		}
 
+		/* 		var i interface{}
+		   		if err := ctx.Bind(&i); err != nil {
+		   			log.Fatalln(err)
+		   		}
+
+		   		log.Println(i) */
+
 		if !strings.EqualFold(claimUser.Rol, enum.Rol.Admin) {
 			return response.New(
 				ctx, http.StatusUnauthorized,

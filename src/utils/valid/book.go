@@ -54,6 +54,10 @@ func (b *book) Digital(format *entity.Format) (errs []error) {
 		errs = append(errs, errors.New("el libro debe tener por lo menos un detalle"))
 	}
 
+	if len(format.Digital.Src) == 0 {
+		errs = append(errs, errors.New("ingrese una url del pdf u ebook"))
+	}
+
 	if len(errs) != 0 {
 		return errs
 	}

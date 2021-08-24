@@ -3,12 +3,14 @@ package handler
 import (
 	"errors"
 	"net/http"
+	"strconv"
 	"strings"
 
 	"github.com/Leonardo-Antonio/api.lyabook/src/entity"
 	"github.com/Leonardo-Antonio/api.lyabook/src/helper"
 	"github.com/Leonardo-Antonio/api.lyabook/src/model"
 	"github.com/Leonardo-Antonio/api.lyabook/src/utils/response"
+	"github.com/Leonardo-Antonio/api.lyabook/src/utils/send"
 	"github.com/Leonardo-Antonio/api.lyabook/src/utils/valid"
 	"github.com/Leonardo-Antonio/validmor"
 	"github.com/labstack/echo/v4"
@@ -17,11 +19,12 @@ import (
 )
 
 type book struct {
-	storage model.Ibook
+	storageBook model.Ibook
+	storageUser model.IUser
 }
 
-func NewBook(storage model.Ibook) *book {
-	return &book{storage}
+func NewBook(storageBook model.Ibook, storageUser model.IUser) *book {
+	return &book{storageBook, storageUser}
 }
 
 func (b *book) Create(ctx echo.Context) error {
@@ -49,7 +52,7 @@ func (b *book) Create(ctx echo.Context) error {
 
 	valid.CreateBook(&book)
 
-	result, err := b.storage.Insert(&book)
+	result, err := b.storageBook.Insert(&book)
 	if err != nil {
 		if mongo.IsDuplicateKeyError(err) {
 			return response.New(
@@ -98,7 +101,7 @@ func (b *book) Edit(ctx echo.Context) error {
 	valid.CreateBook(&book)
 
 	book.Id = id
-	result, err := b.storage.Update(&book)
+	result, err := b.storageBook.Update(&book)
 	if err != nil {
 		if mongo.IsDuplicateKeyError(err) {
 			return response.New(
@@ -135,8 +138,54 @@ func (b *book) AddPromotion(ctx echo.Context) error {
 		)
 	}
 
-	result, err := b.storage.UpdatePriceCurrent(id, book.PriceCurrent)
+	dataBookPromotion, err := b.storageBook.FindBookById(id)
 	if err != nil {
+		if errors.Is(err, mongo.ErrNoDocuments) {
+			return response.New(
+				ctx, http.StatusBadRequest,
+				"el libro con el id <"+id.String()+"> no existe",
+				true, nil,
+			)
+		}
+		return response.New(
+			ctx, http.StatusInternalServerError,
+			err.Error(),
+			true, nil,
+		)
+	}
+
+	if dataBookPromotion.PriceBefore < book.PriceCurrent {
+		return response.New(
+			ctx, http.StatusBadRequest,
+			"no seria una oferta si agrega <"+strconv.Itoa(int(book.PriceCurrent))+"> ya que es mayor al precio anterior <"+strconv.Itoa(int(dataBookPromotion.PriceBefore))+">",
+			true, nil,
+		)
+	}
+
+	result, err := b.storageBook.UpdatePriceCurrent(id, book.PriceCurrent)
+	if err != nil {
+		return response.New(
+			ctx, http.StatusInternalServerError,
+			err.Error(),
+			true, nil,
+		)
+	}
+
+	users, err := b.storageUser.FindUsersWithEmail()
+	if err != nil {
+		return response.New(
+			ctx, http.StatusInternalServerError,
+			err.Error(),
+			true, nil,
+		)
+	}
+
+	var emails []string
+	for _, email := range users {
+		emails = append(emails, email.Email)
+	}
+
+	if err := send.Promotion(dataBookPromotion, emails...); err != nil {
 		return response.New(
 			ctx, http.StatusInternalServerError,
 			err.Error(),
@@ -147,6 +196,6 @@ func (b *book) AddPromotion(ctx echo.Context) error {
 	return response.New(
 		ctx, http.StatusOK,
 		"se agrego la nueva promocion del libro",
-		true, result,
+		false, result,
 	)
 }

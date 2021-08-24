@@ -20,6 +20,7 @@ type (
 		Insert(book *entity.Book) (*mongo.InsertOneResult, error)
 		Update(book *entity.Book) (*mongo.UpdateResult, error)
 		UpdatePriceCurrent(id primitive.ObjectID, priceCurrent float64) (*mongo.UpdateResult, error)
+		FindBookById(id primitive.ObjectID) (book entity.Book, err error)
 	}
 )
 
@@ -86,4 +87,17 @@ func (b *book) UpdatePriceCurrent(id primitive.ObjectID, priceCurrent float64) (
 	}
 
 	return result, nil
+}
+
+func (b *book) FindBookById(id primitive.ObjectID) (book entity.Book, err error) {
+	filter := bson.M{
+		"_id":    id,
+		"active": true,
+	}
+
+	if err := b.collection.FindOne(context.TODO(), filter).Decode(&book); err != nil {
+		return book, err
+	}
+
+	return
 }

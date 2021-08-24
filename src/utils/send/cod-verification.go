@@ -3,7 +3,7 @@ package send
 import "github.com/Leonardo-Antonio/api.lyabook/src/entity"
 
 func CodVerification(user entity.User) error {
-	tpl, err := readTemplate("cod-verification.html", "./template/cod-verification.html", user)
+	tpl, err := readTemplate("cod-verification.tpl", "./template/cod-verification.tpl", user)
 	if err != nil {
 		return err
 	}

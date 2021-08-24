@@ -8,8 +8,8 @@ import (
 	"github.com/labstack/echo/v4"
 )
 
-func Book(storage model.Ibook, app *echo.Echo) {
-	book := handler.NewBook(storage)
+func Book(storageBook model.Ibook, storageUser model.IUser, app *echo.Echo) {
+	book := handler.NewBook(storageBook, storageUser)
 
 	group := app.Group(env.Data.BaseUrl + "/books")
 	group.Use(middleware.Authorization().Admin)

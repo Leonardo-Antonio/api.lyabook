@@ -27,6 +27,7 @@ func New() *server {
 }
 func (s *server) Middlewares() {
 	s.app.Use(middleware.Recover())
+	s.app.Use(middleware.Logger())
 	s.app.Use(middleware.CORS())
 }
 
@@ -50,7 +51,7 @@ func (s *server) Routers() {
 	router.Documentation(s.app)
 	router.User(model.NewUser(db), s.app)
 	router.Category(model.NewCategoty(db), s.app)
-	router.Book(model.NewBook(db), s.app)
+	router.Book(model.NewBook(db), model.NewUser(db), s.app)
 }
 
 func (s *server) Listeing() {
