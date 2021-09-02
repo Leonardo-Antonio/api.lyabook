@@ -18,6 +18,7 @@ type (
 
 	ICategory interface {
 		Insert(category *entity.Category) (*mongo.InsertOneResult, error)
+		InsertMany(categories []*entity.Category) (*mongo.InsertManyResult, error)
 		Update(category *entity.Category) (*mongo.UpdateResult, error)
 	}
 )
@@ -39,6 +40,21 @@ func (c *category) Insert(category *entity.Category) (*mongo.InsertOneResult, er
 	}
 
 	return result, nil
+}
+
+func (c *category) InsertMany(categories []*entity.Category) (*mongo.InsertManyResult, error) {
+	var i []interface{}
+	for _, category := range categories {
+		category.Id = primitive.NewObjectID()
+		category.CreatedAt = time.Now()
+		category.Active = true
+		i = append(i, category)
+	}
+	resultMany, err := c.collection.InsertMany(context.TODO(), i)
+	if err != nil {
+		return nil, err
+	}
+	return resultMany, nil
 }
 
 func (c *category) Update(category *entity.Category) (*mongo.UpdateResult, error) {

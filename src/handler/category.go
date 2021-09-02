@@ -83,6 +83,60 @@ func (c *category) Add(ctx echo.Context) error {
 	)
 }
 
+func (c *category) AddMany(ctx echo.Context) error {
+	var categories []*entity.Category
+	if err := ctx.Bind(&categories); err != nil {
+		return response.New(
+			ctx, http.StatusBadRequest,
+			"la estructura que ingreso no es valida",
+			true, nil,
+		)
+	}
+
+	var errs []error
+	for _, category := range categories {
+		if len(category.Slug) != 0 {
+			errs = append(errs, errors.New("el slug se genera automaticamente"))
+		}
+		category.Slug = strings.Join(strings.Split(category.Name, " "), "-")
+
+		erros := validmor.ValidateStruct(*category)
+		if len(erros) != 0 {
+			errs = append(errs, erros...)
+		}
+	}
+
+	if len(errs) != 0 {
+		return response.New(
+			ctx, http.StatusBadRequest,
+			helper.ErrToString(errs),
+			true, nil,
+		)
+	}
+
+	result, err := c.storage.InsertMany(categories)
+	if err != nil {
+		if mongo.IsDuplicateKeyError(err) {
+			return response.New(
+				ctx, http.StatusBadRequest,
+				"verifique que las categorias no existan",
+				true, nil,
+			)
+		}
+		return response.New(
+			ctx, http.StatusBadRequest,
+			err.Error(),
+			true, nil,
+		)
+	}
+
+	return response.New(
+		ctx, http.StatusCreated,
+		"las categorias se crearon correctamente",
+		false, result,
+	)
+}
+
 func (c *category) Update(ctx echo.Context) error {
 	id, err := primitive.ObjectIDFromHex(ctx.Param("id"))
 	if err != nil {
