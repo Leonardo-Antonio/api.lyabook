@@ -2,6 +2,7 @@ package handler
 
 import (
 	"errors"
+	"fmt"
 	"net/http"
 	"strings"
 
@@ -209,5 +210,35 @@ func (c *category) Update(ctx echo.Context) error {
 		ctx, http.StatusOK,
 		message,
 		false, result,
+	)
+}
+
+func (c *category) DeleteById(ctx echo.Context) error {
+	if len(ctx.QueryParam("id")) == 0 {
+		return response.New(ctx, http.StatusBadRequest, "ingrese un id", true, nil)
+	}
+
+	id, err := primitive.ObjectIDFromHex(ctx.QueryParam("id"))
+	if err != nil {
+		return response.New(ctx, http.StatusBadRequest, fmt.Sprintf("el id <%s> no es valido", ctx.QueryParam("id")), true, nil)
+	}
+
+	result, err := c.storage.DeleteById(id)
+	if err != nil {
+		return response.New(ctx, http.StatusInternalServerError, err.Error(), true, nil)
+	}
+
+	if result.MatchedCount != 1 {
+		return response.New(
+			ctx, http.StatusBadRequest,
+			fmt.Sprintf("no se logro eliminar el libro con el id <%s>", ctx.QueryParam("id")),
+			true, nil,
+		)
+	}
+
+	return response.New(
+		ctx, http.StatusOK,
+		"el libro se elimino correctamente",
+		true, nil,
 	)
 }

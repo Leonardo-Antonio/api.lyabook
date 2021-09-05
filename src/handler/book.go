@@ -2,6 +2,7 @@ package handler
 
 import (
 	"errors"
+	"fmt"
 	"net/http"
 	"strconv"
 	"strings"
@@ -216,7 +217,11 @@ func (b *book) DeleteById(ctx echo.Context) error {
 
 	id, err := primitive.ObjectIDFromHex(ctx.QueryParam("id"))
 	if err != nil {
-		return response.New(ctx, http.StatusBadRequest, "el id <"+id.String()+">no es valido", true, nil)
+		return response.New(
+			ctx, http.StatusBadRequest,
+			fmt.Sprintf("el id <%s>no es valido",
+				ctx.QueryParam("id")), true, nil,
+		)
 	}
 
 	result, err := b.storageBook.DeleteById(id)
@@ -227,7 +232,7 @@ func (b *book) DeleteById(ctx echo.Context) error {
 	if result.MatchedCount != 1 {
 		return response.New(
 			ctx, http.StatusBadRequest,
-			"no se encontro el libro con el id <"+ctx.QueryParam("id")+">",
+			fmt.Sprintf("no se encontro el libro con el id <%s>", ctx.QueryParam("id")),
 			true, nil)
 	}
 

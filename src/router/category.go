@@ -14,5 +14,6 @@ func Category(storage model.ICategory, app *echo.Echo) {
 	group := app.Group(env.Data.BaseUrl+"/categories", middleware.Authorization().Admin)
 	group.POST("", category.AddMany)
 	group.POST("/one", category.Add)
+	group.DELETE("", category.DeleteById)
 	group.PUT("/:id", category.Update)
 }

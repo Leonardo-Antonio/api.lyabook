@@ -20,6 +20,7 @@ type (
 		Insert(category *entity.Category) (*mongo.InsertOneResult, error)
 		InsertMany(categories []*entity.Category) (*mongo.InsertManyResult, error)
 		Update(category *entity.Category) (*mongo.UpdateResult, error)
+		DeleteById(id primitive.ObjectID) (*mongo.UpdateResult, error)
 	}
 )
 
@@ -66,6 +67,27 @@ func (c *category) Update(category *entity.Category) (*mongo.UpdateResult, error
 	result, err := c.collection.UpdateByID(
 		context.TODO(),
 		category.Id, update,
+	)
+
+	if err != nil {
+		return nil, err
+	}
+
+	return result, nil
+}
+
+func (c *category) DeleteById(id primitive.ObjectID) (*mongo.UpdateResult, error) {
+	delete := bson.M{
+		"$set": bson.M{
+			"deleted_at": time.Now(),
+			"active":     false,
+		},
+	}
+
+	result, err := c.collection.UpdateByID(
+		context.TODO(),
+		id,
+		delete,
 	)
 
 	if err != nil {
