@@ -1,7 +1,7 @@
 # API RESTful for Mor - LyaBook
 ### Kill ports
 ```shell
-lsof -i:8080
+lsof -i:8000
 # out console
 main    286077  leo    9u  IPv6 1398322      0t0  TCP *:http-alt (LISTEN)
 main    286077  leo   11u  IPv6 1395667      0t0  TCP localhost:http-alt->localhost:40034 (CLOSE_WAIT)
@@ -32,13 +32,13 @@ openssl rsa -in app.rsa -pubout > app.rsa.pub
 ## User
 ##### SignUp - Crear cuenta [POST]
 ```json
-- http://localhost:8080/api/v1/users/sign-up/dni
+- http://localhost:8000/api/v1/users/sign-up/dni
 {
     "password": "cmcx100pre",
     "rol": "Admin",
     "dni": "71062235" 
 }
-- http://localhost:8080/api/v1/users/sign-up/email
+- http://localhost:8000/api/v1/users/sign-up/email
 {
     "name": "leonardo antONio",
     "last_name": "noLASco LEyva",
@@ -50,7 +50,7 @@ openssl rsa -in app.rsa -pubout > app.rsa.pub
 
 ##### Verify - Verificar cuenta [POST]
 ```json
-- http://localhost:8080/api/v1/users/verify
+- http://localhost:8000/api/v1/users/verify
 {
     "verification_code": "VQ25IO8X",
     "email": "leo2001.nl08@gmail.com"
@@ -60,12 +60,12 @@ openssl rsa -in app.rsa -pubout > app.rsa.pub
 ---
 ##### LogIn - Ingresar [POST]
 ```json
-- http://localhost:8080/api/v1/users/log-in/dni
+- http://localhost:8000/api/v1/users/log-in/dni
 {
     "password": "cmcx100pre",
     "dni": "71062235" 
 }
-- http://localhost:8080/api/v1/users/log-in/email
+- http://localhost:8000/api/v1/users/log-in/email
 {
     "password": "cmcx100pre",
     "email": "example@example.com" 
@@ -74,7 +74,7 @@ openssl rsa -in app.rsa -pubout > app.rsa.pub
 ---
 ##### Update - Actualizar usuario [PUT]
 ```json
-- http://localhost:8080/api/v1/users/:id 
+- http://localhost:8000/api/v1/users/:id 
 {
     "name": "Alexandra",
     "last_name": "Navarro",
@@ -87,14 +87,14 @@ openssl rsa -in app.rsa -pubout > app.rsa.pub
 > Para usar este endpoint es necesario un token del rol admin que se obtiene en el login
 #### Create [POST]
 ```json
-- http://localhost:8080/api/v1/category
+- http://localhost:8000/api/v1/category
 {
     "name": "terror nocturno"
 }
 ```
 #### Update [PUT]
 ```json
-- http://localhost:8080/api/v1/category/:id
+- http://localhost:8000/api/v1/category/:id
 {
     "name": "terror nocturno"
 }
@@ -107,8 +107,8 @@ openssl rsa -in app.rsa -pubout > app.rsa.pub
 #### Create [POST] and Update [PUT]
 ```json
 // crea y actualiza libro digital 
-- http://localhost:8080/api/v1/books/d [POST]
-- http://localhost:8080/api/v1/books/d:id [PUT]
+- http://localhost:8000/api/v1/books/d [POST]
+- http://localhost:8000/api/v1/books/d:id [PUT]
 {
     "name": "Misterio, una pasión",
     "author": "Aldo Miashiro",
@@ -117,19 +117,19 @@ openssl rsa -in app.rsa -pubout > app.rsa.pub
     "description": "Misterio, una historia basada en hechos reales de la creación de la trinchera norte",
     "type": {
         "digital": {
-            "format": "asds",
-            "details": ["dsdsdsd"]
+            "src": "https://pdf.pdf"
         }
     },
     "categories": ["61101d22b88c55b02dbc5f2c"],
-    "src": "https://imge.com"
+    "details": ["dsdsdsd"],
+    "image_src": ["https://image.com"]
 }
 
 
 
 // crea y actualiza libro fisico 
-- http://localhost:8080/api/v1/books/f [POST]
-- http://localhost:8080/api/v1/books/f:id [PUT]
+- http://localhost:8000/api/v1/books/f [POST]
+- http://localhost:8000/api/v1/books/f:id [PUT]
 {
     "name": "Misterio, una pasión",
     "author": "Aldo Miashiro",
@@ -138,21 +138,21 @@ openssl rsa -in app.rsa -pubout > app.rsa.pub
     "description": "Misterio, una historia basada en hechos reales de la creación de la trinchera norte",
     "type": {
         "fisico": {
-            "details": ["ssdsa"],
             "log": "151525411",
             "lat": "-45854514515",
             "stock": 4
         }
     },
     "categories": ["61101d22b88c55b02dbc5f2c"],
-    "src": "https://imge.com"
+    "images_src": [],
+    "details": []
 }
 
 
 
 // crea y actualiza libro fisico y digital
-- http://localhost:8080/api/v1/books/df [POST]
-- http://localhost:8080/api/v1/books/df/:id [PUT]
+- http://localhost:8000/api/v1/books/df [POST]
+- http://localhost:8000/api/v1/books/df/:id [PUT]
 {
     "name": "Misterio, una pasión",
     "author": "Aldo Miashiro",
@@ -161,26 +161,24 @@ openssl rsa -in app.rsa -pubout > app.rsa.pub
     "description": "Misterio, una historia basada en hechos reales de la creación de la trinchera norte",
     "type": {
         "digital": {
-            "format": "asds",
-            "details": ["dsdsdsd"]
+            "src": "sdasds"
         },
         "fisico": {
-            "details": ["ssdsa"],
             "log": "151525411",
             "lat": "-45854514515",
             "stock": 4
         }
     },
     "categories": ["61101d22b88c55b02dbc5f2c"],
-    "src": "https://imge.com"
+    "images_src": [],
+    "details": []
 }
 ```
 
 #### Add Promotion [PATCH]
+
+#### Add Promotion [DELETE]
 > Para usar este endpoint es necesario un token del rol admin que se obtiene en el login
 ```json
-- http://localhost:8080/api/v1/books/promotions/:id
-{
-    "price_current": 55
-}
+- http://localhost:8000/api/v1/books?id=34324090943243249839
 ```
