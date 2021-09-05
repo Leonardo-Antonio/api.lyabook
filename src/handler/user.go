@@ -3,6 +3,7 @@ package handler
 import (
 	"errors"
 	"net/http"
+	"strings"
 
 	"github.com/Leonardo-Antonio/api.lyabook/src/authorization"
 	"github.com/Leonardo-Antonio/api.lyabook/src/entity"
@@ -293,4 +294,13 @@ func (u *user) validateFieldsNoUpdated(user *entity.User) {
 	user.Rol = ""
 	user.Dni = ""
 	user.VerificationCode = ""
+}
+
+func (u *user) FindAllUsersByRol(ctx echo.Context) error {
+	admins, err := u.storage.FindAllUsersByRol(strings.Title(strings.ToLower(enum.Rol.Admin)))
+	if err != nil {
+		return response.New(ctx, http.StatusInternalServerError, err.Error(), true, nil)
+	}
+
+	return response.New(ctx, http.StatusOK, "ok", false, admins)
 }

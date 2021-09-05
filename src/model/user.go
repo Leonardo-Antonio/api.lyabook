@@ -26,6 +26,7 @@ type (
 		VerifyAccount(email, code string) (entity.User, error)
 		Update(user *entity.User) (*mongo.UpdateResult, error)
 		FindUsersWithEmail() (entity.Users, error)
+		FindAllUsersByRol(rol string) (entity.Users, error)
 	}
 )
 
@@ -147,6 +148,24 @@ func (b *user) FindUsersWithEmail() (entity.Users, error) {
 		return nil, err
 	}
 
+	defer cursor.Close(context.TODO())
+
+	var users entity.Users
+	if err := cursor.All(context.TODO(), &users); err != nil {
+		return nil, err
+	}
+
+	return users, nil
+}
+
+func (u *user) FindAllUsersByRol(rol string) (entity.Users, error) {
+	filter := bson.M{
+		"rol": rol,
+	}
+	cursor, err := u.collection.Find(context.TODO(), filter)
+	if err != nil {
+		return nil, err
+	}
 	defer cursor.Close(context.TODO())
 
 	var users entity.Users
