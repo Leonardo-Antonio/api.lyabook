@@ -46,7 +46,14 @@ func (c *category) Add(ctx echo.Context) error {
 		}
 	}
 
-	category.Slug = strings.Join(strings.Split(category.Name, " "), "-")
+	category.Slug = strings.ToLower(
+		strings.Join(
+			strings.Split(
+				category.Name, " ",
+			),
+			"-",
+		),
+	)
 
 	errs := validmor.ValidateStruct(category)
 	if err != nil {
@@ -99,7 +106,15 @@ func (c *category) AddMany(ctx echo.Context) error {
 		if len(category.Slug) != 0 {
 			errs = append(errs, errors.New("el slug se genera automaticamente"))
 		}
-		category.Slug = strings.Join(strings.Split(category.Name, " "), "-")
+
+		category.Slug = strings.ToLower(
+			strings.Join(
+				strings.Split(
+					category.Name, " ",
+				),
+				"-",
+			),
+		)
 
 		erros := validmor.ValidateStruct(*category)
 		if len(erros) != 0 {
@@ -168,7 +183,14 @@ func (c *category) Update(ctx echo.Context) error {
 		}
 	}
 
-	category.Slug = strings.Join(strings.Split(category.Name, " "), "-")
+	category.Slug = strings.ToLower(
+		strings.Join(
+			strings.Split(
+				category.Name, " ",
+			),
+			"-",
+		),
+	)
 	category.Id = id
 
 	errs := validmor.ValidateStruct(category)
