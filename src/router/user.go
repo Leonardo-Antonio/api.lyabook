@@ -11,10 +11,10 @@ func User(storage model.IUser, app *echo.Echo) {
 	user := handler.NewUser(storage)
 
 	group := app.Group(env.Data.BaseUrl + "/users")
-	group.DELETE("", user.DeleteById)
+	group.PUT("/:id", user.Update)
+	group.DELETE("/admin", user.DeleteById)
 	group.POST("/sign-up/:type", user.SignUp)
 	group.POST("/log-in/:type", user.LogIn)
 	group.POST("/verify", user.VerifyAccount)
-	group.PUT("/:id", user.Update)
 	group.GET("/roles/admin", user.FindAllUsersByRol)
 }
