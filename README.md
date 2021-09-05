@@ -99,6 +99,12 @@ openssl rsa -in app.rsa -pubout > app.rsa.pub
     "name": "terror nocturno"
 }
 ```
+
+#### Delete by id [DELETE]
+> Para usar este endpoint es necesario un token del rol admin que se obtiene en el login
+```json
+- http://localhost:8000/api/v1/books?id=34324090943243249839
+```
 ---
 
 
@@ -177,7 +183,7 @@ openssl rsa -in app.rsa -pubout > app.rsa.pub
 
 #### Add Promotion [PATCH]
 
-#### Add Promotion [DELETE]
+#### Delete by id [DELETE]
 > Para usar este endpoint es necesario un token del rol admin que se obtiene en el login
 ```json
 - http://localhost:8000/api/v1/books?id=34324090943243249839
