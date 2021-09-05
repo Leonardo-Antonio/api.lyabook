@@ -231,9 +231,8 @@ func (c *category) DeleteById(ctx echo.Context) error {
 	if result.MatchedCount != 1 {
 		return response.New(
 			ctx, http.StatusBadRequest,
-			fmt.Sprintf("no se logro eliminar el libro con el id <%s>", ctx.QueryParam("id")),
-			true, nil,
-		)
+			fmt.Sprintf("no se encontro el libro con el id <%s>", ctx.QueryParam("id")),
+			true, nil)
 	}
 
 	return response.New(
