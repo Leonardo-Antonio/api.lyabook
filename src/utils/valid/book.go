@@ -50,10 +50,6 @@ func (b *book) Format(format *entity.Format, slug string) []error {
 
 func (b *book) Digital(format *entity.Format) (errs []error) {
 	format.Digital.Format = enum.Format.Digital
-	if len(format.Digital.Details) == 0 {
-		errs = append(errs, errors.New("el libro debe tener por lo menos un detalle"))
-	}
-
 	if len(format.Digital.Src) == 0 {
 		errs = append(errs, errors.New("ingrese una url del pdf u ebook"))
 	}
@@ -67,9 +63,7 @@ func (b *book) Digital(format *entity.Format) (errs []error) {
 
 func (b *book) Fisico(format *entity.Format) (errs []error) {
 	format.Fisico.Format = enum.Format.Fisico
-	if len(format.Fisico.Details) == 0 {
-		errs = append(errs, errors.New("el libro debe tener por lo menos un detalle"))
-	}
+
 	if len(format.Fisico.Lat) == 0 {
 		errs = append(errs, errors.New("la lantitud <lat> no es valida"))
 	}

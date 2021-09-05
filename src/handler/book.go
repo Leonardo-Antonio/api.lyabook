@@ -39,6 +39,15 @@ func (b *book) Create(ctx echo.Context) error {
 
 	book.Slug = strings.ToLower(strings.Join(strings.Split(book.Name, " "), "-"))
 	errs := validmor.ValidateStruct(book)
+
+	if len(book.ImagesSrc) == 0 {
+		errs = append(errs, errors.New("el libro debe tener al menos una imagen"))
+	}
+
+	if len(book.Details) == 0 {
+		errs = append(errs, errors.New("el libro debe tener al menos detalle sobre el libro"))
+	}
+
 	if ers := valid.Format(&book.Type, slug); len(ers) != 0 {
 		errs = append(errs, ers...)
 	}

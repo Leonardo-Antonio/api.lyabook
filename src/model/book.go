@@ -101,3 +101,17 @@ func (b *book) FindBookById(id primitive.ObjectID) (book entity.Book, err error)
 
 	return
 }
+
+func (b *book) DeleteById(id primitive.ObjectID) (*mongo.UpdateResult, error) {
+	update := bson.M{
+		"$set": bson.M{
+			"deleted_at": time.Now(),
+		},
+	}
+	result, err := b.collection.UpdateByID(context.TODO(), id, update)
+	if err != nil {
+		return nil, err
+	}
+
+	return result, nil
+}
