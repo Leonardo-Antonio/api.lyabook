@@ -2,6 +2,7 @@ package handler
 
 import (
 	"errors"
+	"fmt"
 	"net/http"
 	"strings"
 
@@ -303,4 +304,37 @@ func (u *user) FindAllUsersByRol(ctx echo.Context) error {
 	}
 
 	return response.New(ctx, http.StatusOK, "ok", false, admins)
+}
+
+func (u *user) DeleteById(ctx echo.Context) error {
+	if len(ctx.QueryParam("id")) == 0 {
+		return response.New(ctx, http.StatusBadRequest, "ingrese un id", true, nil)
+	}
+
+	id, err := primitive.ObjectIDFromHex(ctx.QueryParam("id"))
+	if err != nil {
+		return response.New(
+			ctx, http.StatusBadRequest,
+			fmt.Sprintf("el id <%s>no es valido",
+				ctx.QueryParam("id")), true, nil,
+		)
+	}
+
+	result, err := u.storage.DeleteById(id)
+	if err != nil {
+		return response.New(ctx, http.StatusInternalServerError, err.Error(), true, nil)
+	}
+
+	if result.MatchedCount != 1 {
+		return response.New(
+			ctx, http.StatusBadRequest,
+			fmt.Sprintf("no se encontro el admin con el id <%s>", ctx.QueryParam("id")),
+			true, nil)
+	}
+
+	return response.New(
+		ctx, http.StatusOK,
+		"el admin se elimino correctamente",
+		false, result,
+	)
 }

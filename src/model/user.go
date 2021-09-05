@@ -27,6 +27,7 @@ type (
 		Update(user *entity.User) (*mongo.UpdateResult, error)
 		FindUsersWithEmail() (entity.Users, error)
 		FindAllUsersByRol(rol string) (entity.Users, error)
+		DeleteById(id primitive.ObjectID) (*mongo.UpdateResult, error)
 	}
 )
 
@@ -174,4 +175,25 @@ func (u *user) FindAllUsersByRol(rol string) (entity.Users, error) {
 	}
 
 	return users, nil
+}
+
+func (u *user) DeleteById(id primitive.ObjectID) (*mongo.UpdateResult, error) {
+	delete := bson.M{
+		"$set": bson.M{
+			"deleted_at": time.Now(),
+			"active":     false,
+		},
+	}
+
+	result, err := u.collection.UpdateByID(
+		context.TODO(),
+		id,
+		delete,
+	)
+
+	if err != nil {
+		return nil, err
+	}
+
+	return result, nil
 }
