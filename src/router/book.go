@@ -13,6 +13,7 @@ func Book(storageBook model.Ibook, storageUser model.IUser, app *echo.Echo) {
 
 	group := app.Group(env.Data.BaseUrl + "/books")
 	group.Use(middleware.Authorization().Admin)
+	group.DELETE("", book.DeleteById)
 	group.POST("/:format", book.Create)  // d -> digital, f -> fisico or df -> digital and fisico
 	group.PUT("/:format/:id", book.Edit) // d -> digital, f -> fisico or df -> digital and fisico
 	group.PATCH("/promotions/:id", book.AddPromotion)

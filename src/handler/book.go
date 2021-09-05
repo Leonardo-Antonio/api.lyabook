@@ -208,3 +208,32 @@ func (b *book) AddPromotion(ctx echo.Context) error {
 		false, result,
 	)
 }
+
+func (b *book) DeleteById(ctx echo.Context) error {
+	if len(ctx.QueryParam("id")) == 0 {
+		return response.New(ctx, http.StatusBadRequest, "ingrese un id", true, nil)
+	}
+
+	id, err := primitive.ObjectIDFromHex(ctx.QueryParam("id"))
+	if err != nil {
+		return response.New(ctx, http.StatusBadRequest, "el id <"+id.String()+">no es valido", true, nil)
+	}
+
+	result, err := b.storageBook.DeleteById(id)
+	if err != nil {
+		return response.New(ctx, http.StatusInternalServerError, err.Error(), true, nil)
+	}
+
+	if result.MatchedCount != 1 {
+		return response.New(
+			ctx, http.StatusBadRequest,
+			"no se encontro el libro con el id <"+ctx.QueryParam("id")+">",
+			true, nil)
+	}
+
+	return response.New(
+		ctx, http.StatusOK,
+		"el libro se elimino correctamente",
+		false, result,
+	)
+}

@@ -21,6 +21,7 @@ type (
 		Update(book *entity.Book) (*mongo.UpdateResult, error)
 		UpdatePriceCurrent(id primitive.ObjectID, priceCurrent float64) (*mongo.UpdateResult, error)
 		FindBookById(id primitive.ObjectID) (book entity.Book, err error)
+		DeleteById(id primitive.ObjectID) (*mongo.UpdateResult, error)
 	}
 )
 
@@ -106,6 +107,7 @@ func (b *book) DeleteById(id primitive.ObjectID) (*mongo.UpdateResult, error) {
 	update := bson.M{
 		"$set": bson.M{
 			"deleted_at": time.Now(),
+			"active":     false,
 		},
 	}
 	result, err := b.collection.UpdateByID(context.TODO(), id, update)
