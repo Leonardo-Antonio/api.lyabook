@@ -123,7 +123,15 @@ func (b *book) Edit(ctx echo.Context) error {
 		return response.New(ctx, http.StatusInternalServerError, err.Error(), true, nil)
 	}
 
-	return response.New(ctx, http.StatusOK, "el libro <"+book.Name+"> se creo correctamente", false, result)
+	if result.MatchedCount != 1 {
+		return response.New(
+			ctx, http.StatusBadRequest,
+			"no se logro actualizar el libro, el id no existe",
+			true, nil,
+		)
+	}
+
+	return response.New(ctx, http.StatusOK, "el libro <"+book.Name+"> se actualizo correctamente", false, result)
 }
 
 func (b *book) AddPromotion(ctx echo.Context) error {

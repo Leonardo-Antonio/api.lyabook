@@ -28,6 +28,7 @@ type (
 		FindUsersWithEmail() (entity.Users, error)
 		FindAllUsersByRol(rol string) (entity.Users, error)
 		DeleteById(id primitive.ObjectID) (*mongo.UpdateResult, error)
+		CountUserByRol(rol string) (int64, error)
 	}
 )
 
@@ -196,4 +197,16 @@ func (u *user) DeleteById(id primitive.ObjectID) (*mongo.UpdateResult, error) {
 	}
 
 	return result, nil
+}
+
+func (u *user) CountUserByRol(rol string) (int64, error) {
+	filter := bson.M{
+		"rol": rol,
+	}
+	amount, err := u.collection.CountDocuments(context.TODO(), filter)
+	if err != nil {
+		return 0, err
+	}
+
+	return amount, nil
 }

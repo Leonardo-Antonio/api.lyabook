@@ -338,3 +338,18 @@ func (u *user) DeleteById(ctx echo.Context) error {
 		false, result,
 	)
 }
+
+func (u *user) CountByRol(ctx echo.Context) error {
+	amount, err := u.storage.CountUserByRol(strings.Title(strings.ToLower(enum.Rol.Client)))
+	if err != nil {
+		return response.New(
+			ctx, http.StatusInternalServerError,
+			err.Error(), true, nil,
+		)
+	}
+
+	return response.New(
+		ctx, http.StatusOK,
+		"ok", false, amount,
+	)
+}

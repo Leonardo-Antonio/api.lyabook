@@ -17,4 +17,5 @@ func User(storage model.IUser, app *echo.Echo) {
 	group.POST("/log-in/:type", user.LogIn)
 	group.POST("/verify", user.VerifyAccount)
 	group.GET("/roles/admin", user.FindAllUsersByRol)
+	group.GET("/count/admin", user.CountByRol)
 }
