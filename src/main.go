@@ -5,7 +5,7 @@ import (
 )
 
 func main() {
-	app := app.New()
+	app := app.New(app.PROD)
 	app.Configs()
 	app.Middlewares()
 	app.Routers()

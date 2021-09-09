@@ -45,3 +45,5 @@ lerna-debug.log*
 # Certificates
 /certificate/app.rsa
 /certificate/app.rsa.pub
+
+app

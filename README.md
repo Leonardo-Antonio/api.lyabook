@@ -1,4 +1,10 @@
 # API RESTful for Mor - LyaBook
+### REMOVE Gitignore
+```shell
+git rm -r --cached .
+```
+
+
 ### Kill ports
 ```shell
 lsof -i:8000
