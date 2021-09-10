@@ -4,5 +4,6 @@ services:
   web:
     build: .
     image: api.lyabook.image
+    restart: always
     ports:
       - 8000:8000
