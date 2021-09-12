@@ -47,5 +47,5 @@ lerna-debug.log*
 /certificate/app.rsa.pub
 
 # Bin
-app
-app.exe
+/app
+/app.exe

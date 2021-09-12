@@ -38,3 +38,26 @@ func (a *auth) Admin(f echo.HandlerFunc) echo.HandlerFunc {
 		return f(ctx)
 	}
 }
+
+func (a *auth) Client(f echo.HandlerFunc) echo.HandlerFunc {
+	return func(ctx echo.Context) error {
+		token := ctx.Request().Header.Get("Authorization")
+		claimUser, err := authorization.ValidateToken(token)
+		if err != nil {
+			return response.New(
+				ctx, http.StatusForbidden,
+				err.Error(),
+				true, nil,
+			)
+		}
+
+		if !strings.EqualFold(claimUser.Rol, enum.Rol.Client) {
+			return response.New(
+				ctx, http.StatusUnauthorized,
+				claimUser.Name+", usted no tiene acceso a esta sección",
+				true, nil,
+			)
+		}
+		return f(ctx)
+	}
+}
