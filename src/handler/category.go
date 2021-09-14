@@ -80,7 +80,7 @@ func (c *category) Add(ctx echo.Context) error {
 
 	return response.New(
 		ctx, http.StatusCreated,
-		"la categoria <"+category.Name+"> se creo correctamente",
+		fmt.Sprintf("la categoria <%s> se creo correctamente", category.Name),
 		false, result,
 	)
 }
