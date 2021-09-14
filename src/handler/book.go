@@ -5,11 +5,11 @@ import (
 	"fmt"
 	"net/http"
 	"strconv"
-	"strings"
 
 	"github.com/Leonardo-Antonio/api.lyabook/src/entity"
 	"github.com/Leonardo-Antonio/api.lyabook/src/helper"
 	"github.com/Leonardo-Antonio/api.lyabook/src/model"
+	"github.com/Leonardo-Antonio/api.lyabook/src/utils/formatting"
 	"github.com/Leonardo-Antonio/api.lyabook/src/utils/response"
 	"github.com/Leonardo-Antonio/api.lyabook/src/utils/send"
 	"github.com/Leonardo-Antonio/api.lyabook/src/utils/valid"
@@ -38,7 +38,9 @@ func (b *book) Create(ctx echo.Context) error {
 		return response.New(ctx, http.StatusBadRequest, err.Error(), true, nil)
 	}
 
-	book.Slug = strings.ToLower(strings.Join(strings.Split(book.Name, " "), "-"))
+	book.Slug = book.Name
+	formatting.ReplaceSpecialCharacters(&book.Slug)
+
 	errs := validmor.ValidateStruct(book)
 
 	if len(book.ImagesSrc) == 0 {
@@ -95,7 +97,9 @@ func (b *book) Edit(ctx echo.Context) error {
 		return response.New(ctx, http.StatusBadRequest, err.Error(), true, nil)
 	}
 
-	book.Slug = strings.ToLower(strings.Join(strings.Split(book.Name, " "), "-"))
+	book.Slug = book.Name
+	formatting.ReplaceSpecialCharacters(&book.Slug)
+
 	errs := validmor.ValidateStruct(book)
 	if ers := valid.Format(&book.Type, slug); len(ers) != 0 {
 		errs = append(errs, ers...)

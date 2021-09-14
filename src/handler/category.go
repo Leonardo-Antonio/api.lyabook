@@ -4,11 +4,11 @@ import (
 	"errors"
 	"fmt"
 	"net/http"
-	"strings"
 
 	"github.com/Leonardo-Antonio/api.lyabook/src/entity"
 	"github.com/Leonardo-Antonio/api.lyabook/src/helper"
 	"github.com/Leonardo-Antonio/api.lyabook/src/model"
+	"github.com/Leonardo-Antonio/api.lyabook/src/utils/formatting"
 	"github.com/Leonardo-Antonio/api.lyabook/src/utils/response"
 	"github.com/Leonardo-Antonio/validmor"
 	"github.com/labstack/echo/v4"
@@ -46,14 +46,8 @@ func (c *category) Add(ctx echo.Context) error {
 		}
 	}
 
-	category.Slug = strings.ToLower(
-		strings.Join(
-			strings.Split(
-				category.Name, " ",
-			),
-			"-",
-		),
-	)
+	category.Slug = category.Name
+	formatting.ReplaceSpecialCharacters(&category.Slug)
 
 	errs := validmor.ValidateStruct(category)
 	if err != nil {
@@ -107,14 +101,8 @@ func (c *category) AddMany(ctx echo.Context) error {
 			errs = append(errs, errors.New("el slug se genera automaticamente"))
 		}
 
-		category.Slug = strings.ToLower(
-			strings.Join(
-				strings.Split(
-					category.Name, " ",
-				),
-				"-",
-			),
-		)
+		category.Slug = category.Name
+		formatting.ReplaceSpecialCharacters(&category.Slug)
 
 		erros := validmor.ValidateStruct(*category)
 		if len(erros) != 0 {
@@ -183,14 +171,8 @@ func (c *category) Update(ctx echo.Context) error {
 		}
 	}
 
-	category.Slug = strings.ToLower(
-		strings.Join(
-			strings.Split(
-				category.Name, " ",
-			),
-			"-",
-		),
-	)
+	category.Slug = category.Name
+	formatting.ReplaceSpecialCharacters(&category.Slug)
 	category.Id = id
 
 	errs := validmor.ValidateStruct(category)
