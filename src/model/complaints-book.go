@@ -18,6 +18,7 @@ type (
 	IComplaintsBook interface {
 		InsertOne(data *entity.ComplaintsBook) (*mongo.InsertOneResult, error)
 		FindAll() (entity.ComplaintsBooks, error)
+		CountClaims() (int64, error)
 	}
 )
 
@@ -59,4 +60,16 @@ func (c *complaintsBook) FindAll() (entity.ComplaintsBooks, error) {
 	}
 
 	return data, nil
+}
+
+func (c *complaintsBook) CountClaims() (int64, error) {
+	filter := bson.M{
+		"active": true,
+	}
+	amount, err := c.collection.CountDocuments(context.TODO(), filter)
+	if err != nil {
+		return 0, err
+	}
+
+	return amount, nil
 }

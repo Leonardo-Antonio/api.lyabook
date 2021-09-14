@@ -78,3 +78,16 @@ func (c *complaintsBook) GetAll(ctx echo.Context) error {
 
 	return response.New(ctx, http.StatusOK, "ok", false, claims)
 }
+
+func (c *complaintsBook) CountClaims(ctx echo.Context) error {
+	amount, err := c.storage.CountClaims()
+	if err != nil {
+		return response.New(
+			ctx, http.StatusInternalServerError, err.Error(), true, nil,
+		)
+	}
+
+	return response.New(
+		ctx, http.StatusOK, "ok", false, amount,
+	)
+}
