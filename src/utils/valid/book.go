@@ -20,6 +20,22 @@ func (b *book) CreateBook(book *entity.Book) {
 	book.Stars = 0
 }
 
+func (b *book) ValidArrays(book entity.Book) (errs []error) {
+	if len(book.ImagesSrc) == 0 {
+		errs = append(errs, errors.New("el libro debe tener al menos una imagen"))
+	}
+
+	if len(book.Details) == 0 {
+		errs = append(errs, errors.New("el libro debe tener al menos detalle sobre el libro"))
+	}
+
+	if len(book.Categories) == 0 {
+		errs = append(errs, errors.New("el libro debe tener al menos una categoria"))
+	}
+
+	return errs
+}
+
 func (b *book) Format(format *entity.Format, slug string) []error {
 	switch slug {
 	case "d":

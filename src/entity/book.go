@@ -11,7 +11,7 @@ type Book struct {
 	Name         string               `bson:"name,omitempty" json:"name,omitempty" xml:"name,omitempty" validmor:"required"`
 	Slug         string               `bson:"slug,omitempty" json:"slug,omitempty" xml:"slug,omitempty"`
 	Author       string               `bson:"author,omitempty" json:"author,omitempty" xml:"author,omitempty" validmor:"required"`
-	Editorial    string               `bson:"editorial,omitempty" json:"editorial,omitempty" xml:"editorial,omitempty"`
+	Editorial    string               `bson:"editorial,omitempty" json:"editorial,omitempty" xml:"editorial,omitempty" validmor:"required"`
 	PriceCurrent float64              `bson:"price_current,omitempty" json:"price_current,omitempty" xml:"price_current,omitempty" validmor:"required"`
 	PriceBefore  float64              `bson:"price_before,omitempty" json:"price_before,omitempty" xml:"price_before,omitempty"`
 	Stars        uint                 `bson:"stars,omitempty" json:"stars,omitempty" xml:"stars,omitempty"`
@@ -26,3 +26,5 @@ type Book struct {
 	DeletedAt    time.Time            `bson:"deleted_at,omitempty" json:"deleted_at,omitempty" xml:"deleted_at,omitempty"`
 	Active       bool                 `bson:"active,omitempty" json:"active,omitempty" xml:"active,omitempty"`
 }
+
+type Books []Book

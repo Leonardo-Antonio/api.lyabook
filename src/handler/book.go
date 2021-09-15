@@ -254,3 +254,62 @@ func (b *book) DeleteById(ctx echo.Context) error {
 		false, result,
 	)
 }
+
+func (b *book) CreateMany(ctx echo.Context) error {
+	var books entity.Books
+	if err := ctx.Bind(&books); err != nil {
+		return response.New(
+			ctx, http.StatusBadRequest,
+			"el cuerpo de la petición no es correcta", true, nil,
+		)
+	}
+
+	for _, book := range books {
+		var errs []error
+		valid := valid.Book()
+		valid.CreateBook(&book)
+
+		errs = validmor.ValidateStruct(book)
+
+		if errArrys := valid.ValidArrays(book); len(errArrys) != 0 {
+			errs = append(errs, errArrys...)
+		}
+
+		if (book.Type) == (entity.Format{}) {
+			errs = append(errs, errors.New("el campo <type>, es obligatorio"))
+		}
+
+		if len(errs) != 0 {
+			return response.New(
+				ctx, http.StatusBadRequest,
+				helper.ErrToString(errs), true, nil,
+			)
+		}
+
+		errs = valid.Format(&book.Type, "df")
+		if len(errs) != 0 {
+			return response.New(
+				ctx, http.StatusBadRequest,
+				helper.ErrToString(errs), true, nil,
+			)
+		}
+
+		book.Slug = book.Name
+		formatting.ReplaceSpecialCharacters(&book.Slug)
+	}
+
+	result, err := b.storageBook.InsertMany(&books)
+	if err != nil {
+		if mongo.IsDuplicateKeyError(err) {
+			return response.New(
+				ctx, http.StatusBadRequest,
+				err.Error(), true, nil,
+			)
+		}
+		return response.New(ctx, http.StatusInternalServerError, err.Error(), true, nil)
+	}
+
+	return response.New(
+		ctx, http.StatusCreated, "se crearon correctamente los libros", false, result,
+	)
+}

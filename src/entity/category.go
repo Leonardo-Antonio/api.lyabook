@@ -15,3 +15,5 @@ type Category struct {
 	DeletedAt time.Time          `bson:"deleted_at,omitempty" json:"deleted_at,omitempty" xml:"deleted_at,omitempty"`
 	Active    bool               `bson:"active,omitempty" json:"active,omitempty" xml:"active,omitempty"`
 }
+
+type Categories []Category
