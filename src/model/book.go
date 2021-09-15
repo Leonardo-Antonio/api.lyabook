@@ -22,7 +22,7 @@ type (
 		UpdatePriceCurrent(id primitive.ObjectID, priceCurrent float64) (*mongo.UpdateResult, error)
 		FindBookById(id primitive.ObjectID) (book entity.Book, err error)
 		DeleteById(id primitive.ObjectID) (*mongo.UpdateResult, error)
-		InsertMany(books *entity.Books) (*mongo.InsertManyResult, error)
+		InsertMany(books entity.Books) (*mongo.InsertManyResult, error)
 	}
 )
 
@@ -119,9 +119,9 @@ func (b *book) DeleteById(id primitive.ObjectID) (*mongo.UpdateResult, error) {
 	return result, nil
 }
 
-func (b *book) InsertMany(books *entity.Books) (*mongo.InsertManyResult, error) {
+func (b *book) InsertMany(books entity.Books) (*mongo.InsertManyResult, error) {
 	var i []interface{}
-	for _, book := range *books {
+	for _, book := range books {
 		book.Id = primitive.NewObjectID()
 		book.Active = true
 		book.CreatedAt = time.Now()

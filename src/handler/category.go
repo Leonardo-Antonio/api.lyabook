@@ -62,6 +62,7 @@ func (c *category) Add(ctx echo.Context) error {
 		)
 	}
 
+	category.Name = formatting.ToTitle(category.Name)
 	result, err := c.storage.Insert(&category)
 	if err != nil {
 		if mongo.IsDuplicateKeyError(err) {
@@ -108,6 +109,8 @@ func (c *category) AddMany(ctx echo.Context) error {
 		if len(erros) != 0 {
 			errs = append(errs, erros...)
 		}
+
+		category.Name = formatting.ToTitle(category.Name)
 	}
 
 	if len(errs) != 0 {
@@ -188,6 +191,7 @@ func (c *category) Update(ctx echo.Context) error {
 		)
 	}
 
+	category.Name = formatting.ToTitle(category.Name)
 	result, err := c.storage.Update(&category)
 	if err != nil {
 		if mongo.IsDuplicateKeyError(err) {

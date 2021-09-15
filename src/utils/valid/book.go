@@ -6,6 +6,7 @@ import (
 	"github.com/Leonardo-Antonio/api.lyabook/src/entity"
 	"github.com/Leonardo-Antonio/api.lyabook/src/utils/enum"
 	"github.com/Leonardo-Antonio/api.lyabook/src/utils/errores"
+	"github.com/Leonardo-Antonio/api.lyabook/src/utils/formatting"
 )
 
 type book struct{}
@@ -15,6 +16,9 @@ func Book() *book {
 }
 
 func (b *book) CreateBook(book *entity.Book) {
+	book.Name = formatting.ToTitle(book.Name)
+	book.Editorial = formatting.ToTitle(book.Editorial)
+	book.Author = formatting.ToTitle(book.Author)
 	book.Commentaries = nil
 	book.PriceBefore = 0
 	book.Stars = 0

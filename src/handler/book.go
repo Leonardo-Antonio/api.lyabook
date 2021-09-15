@@ -256,22 +256,23 @@ func (b *book) DeleteById(ctx echo.Context) error {
 }
 
 func (b *book) CreateMany(ctx echo.Context) error {
-	var books entity.Books
+	var books []*entity.Book
 	if err := ctx.Bind(&books); err != nil {
 		return response.New(
 			ctx, http.StatusBadRequest,
-			"el cuerpo de la petición no es correcta", true, nil,
+			"uno de los id de categoria no es valido o el cuerpo de la consulta no es correcta",
+			true, nil,
 		)
 	}
 
 	for _, book := range books {
 		var errs []error
 		valid := valid.Book()
-		valid.CreateBook(&book)
+		valid.CreateBook(book)
 
-		errs = validmor.ValidateStruct(book)
+		errs = validmor.ValidateStruct(*book)
 
-		if errArrys := valid.ValidArrays(book); len(errArrys) != 0 {
+		if errArrys := valid.ValidArrays(*book); len(errArrys) != 0 {
 			errs = append(errs, errArrys...)
 		}
 
@@ -298,7 +299,7 @@ func (b *book) CreateMany(ctx echo.Context) error {
 		formatting.ReplaceSpecialCharacters(&book.Slug)
 	}
 
-	result, err := b.storageBook.InsertMany(&books)
+	result, err := b.storageBook.InsertMany(books)
 	if err != nil {
 		if mongo.IsDuplicateKeyError(err) {
 			return response.New(

@@ -27,4 +27,4 @@ type Book struct {
 	Active       bool                 `bson:"active,omitempty" json:"active,omitempty" xml:"active,omitempty"`
 }
 
-type Books []Book
+type Books []*Book
