@@ -277,6 +277,15 @@ func (u *user) Update(ctx echo.Context) error {
 		)
 	}
 
+	user.Password, err = gobcrypt.Encrypt(user.Password, []byte(key.Password))
+	if err != nil {
+		return response.New(
+			ctx, http.StatusInternalServerError,
+			err.Error(),
+			true, nil,
+		)
+	}
+
 	u.validateFieldsNoUpdated(&user)
 	result, err := u.storage.Update(&user)
 	if err != nil {
@@ -287,11 +296,14 @@ func (u *user) Update(ctx echo.Context) error {
 		)
 	}
 
+	if result.MatchedCount != 1 {
+		return response.New(ctx, http.StatusBadRequest, "No se logro actualzar, verifique que todo este bien", true, nil)
+	}
+
 	return response.New(ctx, http.StatusOK, "se acualizo correctamente", false, result)
 }
 
 func (u *user) validateFieldsNoUpdated(user *entity.User) {
-	user.Email = ""
 	user.Rol = ""
 	user.Dni = ""
 	user.VerificationCode = ""

@@ -10,6 +10,7 @@ type User struct {
 	Id               primitive.ObjectID `json:"_id,omitempty" bson:"_id,omitempty" xml:"_id,omitempty"`
 	Name             string             `json:"name,omitempty" bson:"name,omitempty" xml:"name,omitempty"`
 	LastName         string             `json:"last_name,omitempty" bson:"last_name,omitempty" xml:"last_name,omitempty"`
+	Src              string             `json:"src,omitempty" bson:"src,omitempty" xml:"src,omitempty"`
 	Dni              string             `json:"dni,omitempty" bson:"dni,omitempty" xml:"dni,omitempty"`
 	Email            string             `json:"email,omitempty" bson:"email,omitempty" xml:"email,omitempty"`
 	VerificationCode string             `json:"verification_code,omitempty" bson:"verification_code,omitempty" xml:"verification_code,omitempty"`
