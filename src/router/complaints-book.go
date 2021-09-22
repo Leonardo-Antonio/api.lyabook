@@ -16,4 +16,5 @@ func ComplaintsBook(storage model.IComplaintsBook, app *echo.Echo) {
 	group.POST("", complaintsBook.Add, middleware.Authorization().Client)
 	group.GET("", complaintsBook.GetAll, middleware.Authorization().Admin)
 	group.GET("/amount", complaintsBook.CountClaims, middleware.Authorization().Admin)
+	group.POST("/response/:id", complaintsBook.ResponseClaim, middleware.Authorization().Admin)
 }

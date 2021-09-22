@@ -9,7 +9,7 @@ func Promotion(book entity.Book, to ...string) error {
 	if err != nil {
 		return err
 	}
-	if err := sendMany(tpl, to...); err != nil {
+	if err := SendMany(tpl, "Promociónes", to...); err != nil {
 		return err
 	}
 	return nil

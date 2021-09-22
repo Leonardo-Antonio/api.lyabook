@@ -19,6 +19,7 @@ type (
 		InsertOne(data *entity.ComplaintsBook) (*mongo.InsertOneResult, error)
 		FindAll() (entity.ComplaintsBooks, error)
 		CountClaims() (int64, error)
+		Desactive(id primitive.ObjectID) (*mongo.UpdateResult, error)
 	}
 )
 
@@ -72,4 +73,23 @@ func (c *complaintsBook) CountClaims() (int64, error) {
 	}
 
 	return amount, nil
+}
+
+func (c *complaintsBook) Desactive(id primitive.ObjectID) (*mongo.UpdateResult, error) {
+	filter := bson.M{
+		"$set": bson.M{
+			"active": false,
+		},
+	}
+	result, err := c.collection.UpdateByID(
+		context.TODO(),
+		id,
+		filter,
+	)
+
+	if err != nil {
+		return nil, err
+	}
+
+	return result, nil
 }

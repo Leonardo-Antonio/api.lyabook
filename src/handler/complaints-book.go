@@ -1,14 +1,19 @@
 package handler
 
 import (
+	"fmt"
 	"net/http"
+	"strings"
 
 	"github.com/Leonardo-Antonio/api.lyabook/src/entity"
 	"github.com/Leonardo-Antonio/api.lyabook/src/helper"
 	"github.com/Leonardo-Antonio/api.lyabook/src/model"
 	"github.com/Leonardo-Antonio/api.lyabook/src/utils/response"
+	"github.com/Leonardo-Antonio/api.lyabook/src/utils/send"
+	"github.com/Leonardo-Antonio/api.lyabook/src/utils/tmpl"
 	"github.com/Leonardo-Antonio/validmor"
 	"github.com/labstack/echo/v4"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
 type complaintsBook struct {
@@ -90,4 +95,41 @@ func (c *complaintsBook) CountClaims(ctx echo.Context) error {
 	return response.New(
 		ctx, http.StatusOK, "ok", false, amount,
 	)
+}
+
+func (c *complaintsBook) ResponseClaim(ctx echo.Context) error {
+	id, err := primitive.ObjectIDFromHex(ctx.Param("id"))
+	if err != nil {
+		return response.New(ctx, http.StatusBadRequest, response.ID_INVALID, true, nil)
+	}
+
+	var data entity.ResponseClaim
+	if err := ctx.Bind(&data); err != nil {
+		return response.New(ctx, http.StatusBadRequest, response.STRUCT_INVALID, true, nil)
+	}
+
+	errs := validmor.ValidateStruct(data)
+	if len(errs) != 0 {
+		return response.New(ctx, http.StatusBadRequest, helper.ErrToString(errs), true, nil)
+	}
+
+	result, err := c.storage.Desactive(id)
+	if err != nil {
+		return response.New(ctx, http.StatusInternalServerError, err.Error(), true, nil)
+	}
+
+	if result.MatchedCount != 1 {
+		return response.New(ctx, http.StatusBadRequest, "no encontraron coincidencias con los datos enviados", true, nil)
+	}
+
+	tpl, err := tmpl.Read("response-claim", data)
+	if err != nil {
+		return response.New(ctx, http.StatusInternalServerError, err.Error(), true, nil)
+	}
+
+	if err := send.SendMany(tpl, fmt.Sprintf("Respuesta de %s", strings.ToLower(data.Type)), data.Email); err != nil {
+		return response.New(ctx, http.StatusBadRequest, helper.ErrToString(errs), true, nil)
+	}
+
+	return response.New(ctx, http.StatusOK, "respuesta enviada correctamente", false, nil)
 }
