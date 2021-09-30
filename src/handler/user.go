@@ -11,11 +11,13 @@ import (
 	"github.com/Leonardo-Antonio/api.lyabook/src/helper"
 	"github.com/Leonardo-Antonio/api.lyabook/src/model"
 	"github.com/Leonardo-Antonio/api.lyabook/src/utils/enum"
+	"github.com/Leonardo-Antonio/api.lyabook/src/utils/env"
 	"github.com/Leonardo-Antonio/api.lyabook/src/utils/errores"
 	"github.com/Leonardo-Antonio/api.lyabook/src/utils/formatting"
 	"github.com/Leonardo-Antonio/api.lyabook/src/utils/key"
 	"github.com/Leonardo-Antonio/api.lyabook/src/utils/response"
 	"github.com/Leonardo-Antonio/api.lyabook/src/utils/send"
+	"github.com/Leonardo-Antonio/api.lyabook/src/utils/tmpl"
 	"github.com/Leonardo-Antonio/api.lyabook/src/utils/valid"
 	"github.com/Leonardo-Antonio/gobcrypt/gobcrypt"
 	"github.com/Leonardo-Antonio/validmor"
@@ -81,6 +83,29 @@ func (u *user) SignUp(ctx echo.Context) error {
 		userData.Active = false
 		userData.VerificationCode = gouid.String(8, gouid.UpperCaseAlphaNum)
 
+	case enum.TypeLogin.Admin:
+		if err := valid.Email(&userData); err != nil {
+			errs = append(errs, err)
+		}
+
+		if err := valid.Dni(userData.Dni); err != nil {
+			errs = append(errs, err)
+		}
+
+		if len(errs) != 0 {
+			return response.New(ctx, http.StatusBadRequest, helper.ErrToString(errs), true, nil)
+		}
+
+		if err := helper.GetDniReniec(&userData); err != nil {
+			if errors.Is(err, errores.ErrFindDniApiReniec) {
+				return response.New(ctx, http.StatusBadRequest, err.Error(), true, nil)
+			}
+			return response.New(ctx, http.StatusInternalServerError, err.Error(), true, nil)
+		}
+
+		userData.Active = true
+		userData.VerificationCode = gouid.String(8, gouid.UpperCaseAlphaNum)
+
 	default:
 		return response.New(
 			ctx, http.StatusBadRequest,
@@ -90,6 +115,7 @@ func (u *user) SignUp(ctx echo.Context) error {
 	}
 
 	formatting.User(&userData)
+	userData.Id = primitive.NewObjectID()
 	result, err := u.storage.Insert(&userData)
 	if err != nil {
 		if mongo.IsDuplicateKeyError(err) {
@@ -110,6 +136,24 @@ func (u *user) SignUp(ctx echo.Context) error {
 		resp = "el usuario <" + userData.Email + "> fue creado correctamente"
 
 		if err := send.CodVerification(userData); err != nil {
+			return response.New(ctx, http.StatusInternalServerError, err.Error(), true, nil)
+		}
+	}
+
+	if flag == enum.TypeLogin.Admin {
+		resp = fmt.Sprintf("el administrador <%s>, se creo correctamente", userData.Name)
+
+		verify := &entity.VerificationAccountAdmin{
+			Name: userData.Name,
+			Link: fmt.Sprintf("%s/verify/admin/%s/%s", env.Data.AppClient, userData.Id.Hex(), userData.VerificationCode),
+		}
+
+		tpl, err := tmpl.Read("new-admin", verify)
+		if err != nil {
+			return response.New(ctx, http.StatusInternalServerError, err.Error(), true, nil)
+		}
+
+		if err := send.SendMany(tpl, fmt.Sprintf("Hola %s, verifica tu cuenta", userData.Name), userData.Email); err != nil {
 			return response.New(ctx, http.StatusInternalServerError, err.Error(), true, nil)
 		}
 	}

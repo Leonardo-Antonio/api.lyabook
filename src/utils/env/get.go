@@ -1,6 +1,7 @@
 package env
 
 import (
+	"fmt"
 	"os"
 	"sync"
 )
@@ -15,7 +16,7 @@ type (
 		TokenReniecDni,
 		Email,
 		SecretKeyApplicationEmail,
-		Port string
+		Port, AppClient string
 	}
 )
 
@@ -29,11 +30,12 @@ func GetEnv() {
 			UrlMongo:                  os.Getenv("URL_MONGO"),
 			DBName:                    os.Getenv("DB_NAME"),
 			SecretKey:                 os.Getenv("SECRET_KEY"),
-			Port:                      ":" + os.Getenv("PORT"),
+			Port:                      fmt.Sprintf(":%s", os.Getenv("PORT")),
 			ApiReniecDni:              os.Getenv("API_RENIEC_DNI"),
 			TokenReniecDni:            os.Getenv("TOKEN_API_RENIEC_DNI"),
 			Email:                     os.Getenv("EMAIL"),
 			SecretKeyApplicationEmail: os.Getenv("PASSWORD_EMAIL"),
+			AppClient:                 os.Getenv("APP_CLIENT"),
 		}
 	})
 }

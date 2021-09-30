@@ -28,6 +28,7 @@ type (
 		FindUsersWithEmail() (entity.Users, error)
 		FindAllUsersByRol(rol string) (entity.Users, error)
 		DeleteById(id primitive.ObjectID) (*mongo.UpdateResult, error)
+		DeleteByIdFisico(id primitive.ObjectID) (*mongo.DeleteResult, error)
 		CountUserByRol(rol string) (int64, error)
 	}
 )
@@ -39,7 +40,9 @@ func NewUser(db *mongo.Database) *user {
 }
 
 func (u *user) Insert(user *entity.User) (*mongo.InsertOneResult, error) {
-	user.Id = primitive.NewObjectID()
+	if user.Id.IsZero() {
+		user.Id = primitive.NewObjectID()
+	}
 	user.CreateAt = time.Now()
 
 	result, err := u.collection.InsertOne(
@@ -192,6 +195,18 @@ func (u *user) DeleteById(id primitive.ObjectID) (*mongo.UpdateResult, error) {
 		delete,
 	)
 
+	if err != nil {
+		return nil, err
+	}
+
+	return result, nil
+}
+
+func (u *user) DeleteByIdFisico(id primitive.ObjectID) (*mongo.DeleteResult, error) {
+	filter := bson.M{
+		"_id": id,
+	}
+	result, err := u.collection.DeleteOne(context.TODO(), filter)
 	if err != nil {
 		return nil, err
 	}
