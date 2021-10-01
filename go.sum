@@ -3,6 +3,8 @@ github.com/Leonardo-Antonio/gobcrypt v1.0.0 h1:QvSY/uL0y335X3CfnWhJeqBmr7oW5xwch
 github.com/Leonardo-Antonio/gobcrypt v1.0.0/go.mod h1:L+2RpfNxIAjp1GDXlg4WVXYm7msySCqrzqzwD7MWALg=
 github.com/Leonardo-Antonio/validmor v1.0.1 h1:GFDNdMnh8onAZIRkMx+z5qcQboFZp1FPIMBJg/NlX+s=
 github.com/Leonardo-Antonio/validmor v1.0.1/go.mod h1:2MYrD7EIcVyV621AzhrRZzhtgOZ+U2FTNBvpPF4N0PY=
+github.com/SebastiaanKlippert/go-wkhtmltopdf v1.7.1 h1:U3c/t0AA0x1vx8aDIWAOBtqU000m5wSV7l6xBovk9P0=
+github.com/SebastiaanKlippert/go-wkhtmltopdf v1.7.1/go.mod h1:Yowiac2wF/l7oRlRrB12z11V7kYfUumM4dsacKNAfNo=
 github.com/davecgh/go-spew v1.1.0/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=
 github.com/davecgh/go-spew v1.1.1/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=
 github.com/dgrijalva/jwt-go v3.2.0+incompatible h1:7qlOGliEKZXTDg6OTjfoBKDXWrumCAMpl/TFQ4/5kLM=
@@ -86,6 +88,7 @@ github.com/stretchr/testify v1.2.2/go.mod h1:a8OnRcib4nhh0OaRAV+Yts87kKdq0PP7pXf
 github.com/stretchr/testify v1.3.0/go.mod h1:M5WIy9Dh21IEIfnGCwXGc5bZfKNJtfHm1UVUgZn+9EI=
 github.com/stretchr/testify v1.4.0/go.mod h1:j7eGeouHqKxXV5pUuKE4zz7dFj8WfuZ+81PSLYec5m4=
 github.com/stretchr/testify v1.6.1/go.mod h1:6Fq8oRcR53rry900zMqJjRRixrwX3KX962/h/Wwjteg=
+github.com/stretchr/testify v1.7.0/go.mod h1:6Fq8oRcR53rry900zMqJjRRixrwX3KX962/h/Wwjteg=
 github.com/tidwall/pretty v1.0.0/go.mod h1:XNkn88O1ChpSDQmQeStsy+sBenx6DDtFZJxhVysOjyk=
 github.com/twharmon/gouid v0.3.0 h1:IQ6Zx0ozy2PCNdPNZ/PLjN+Z6BFPUbELq0/SL0sxCJE=
 github.com/twharmon/gouid v0.3.0/go.mod h1:Ruorlc0y7P3Dy3IwLks8m6Rt96O+inLQO3El93ShqdU=

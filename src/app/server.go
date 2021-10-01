@@ -57,6 +57,7 @@ func (s *server) Routers() {
 	router.Category(model.NewCategoty(db), s.app)
 	router.Book(model.NewBook(db), model.NewUser(db), s.app)
 	router.ComplaintsBook(model.NewComplaintsBook(db), s.app)
+	router.Report(s.app)
 }
 
 func (s *server) Listeing() {
