@@ -31,7 +31,6 @@ lerna-debug.log*
 
 
 # Environment
-.env
 .env.test
 .env.production
 
