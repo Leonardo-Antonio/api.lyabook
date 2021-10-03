@@ -327,6 +327,8 @@ func (u *user) Update(ctx echo.Context) error {
 	}
 
 	user.Id = id
+	user.Dni = ""
+	user.Email = ""
 
 	errs := validmor.ValidateStruct(user)
 	if user.Id.IsZero() {
