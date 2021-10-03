@@ -188,10 +188,17 @@ func (u *user) LogIn(ctx echo.Context) error {
 
 		dataUser, err = u.storage.Find(&credentials, enum.TypeLogin.Dni)
 		if err != nil {
+			if errors.Is(err, errores.ErrInvalidPassword) {
+				return response.New(
+					ctx, http.StatusBadRequest,
+					"el password <"+credentials.Password+"> no es correcto o el usuario no existe",
+					true, nil,
+				)
+			}
 			if errors.Is(err, mongo.ErrNoDocuments) {
 				return response.New(
 					ctx, http.StatusBadRequest,
-					"el usuaio <"+credentials.Dni+"> no existe o no ingreso correctamente su credenciales",
+					"el usuaio <"+credentials.Dni+"> no existe o esta inactivo",
 					true, nil,
 				)
 			}
@@ -219,7 +226,7 @@ func (u *user) LogIn(ctx echo.Context) error {
 			if errors.Is(err, mongo.ErrNoDocuments) {
 				return response.New(
 					ctx, http.StatusBadRequest,
-					"el usuaio <"+credentials.Email+"> no existe o no ingreso correctamente su credenciales",
+					"el usuaio <"+credentials.Email+"> no existe o esta inactivo",
 					true, nil,
 				)
 			}
@@ -245,6 +252,19 @@ func (u *user) LogIn(ctx echo.Context) error {
 	resp["user"] = dataUser
 
 	return response.New(ctx, http.StatusOK, "ok", false, resp)
+}
+
+func (u *user) ValidPasswordDecript(passEncrypt, pass string) (bool, error) {
+	passDecode, err := gobcrypt.Decrypt(passEncrypt, []byte(key.Password))
+	if err != nil {
+		return false, err
+	}
+
+	if passDecode != pass {
+		return false, errores.ErrInvalidPassword
+	}
+
+	return true, nil
 }
 
 func (u *user) VerifyAccount(ctx echo.Context) error {

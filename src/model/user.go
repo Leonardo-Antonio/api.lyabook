@@ -71,7 +71,6 @@ func (u *user) Find(credentialsUser *entity.User, flag string) (entity.User, err
 		).Decode(&user); err != nil {
 			return user, err
 		}
-		return user, nil
 
 	case enum.TypeLogin.Email:
 		filter := bson.M{
@@ -96,7 +95,6 @@ func (u *user) Find(credentialsUser *entity.User, flag string) (entity.User, err
 	if passDecode != credentialsUser.Password {
 		return user, errores.ErrInvalidPassword
 	}
-
 	return user, nil
 }
 
