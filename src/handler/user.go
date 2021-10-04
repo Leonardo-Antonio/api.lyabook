@@ -83,29 +83,6 @@ func (u *user) SignUp(ctx echo.Context) error {
 		userData.Active = false
 		userData.VerificationCode = gouid.String(8, gouid.UpperCaseAlphaNum)
 
-	case enum.TypeLogin.Admin:
-		if err := valid.Email(&userData); err != nil {
-			errs = append(errs, err)
-		}
-
-		if err := valid.Dni(userData.Dni); err != nil {
-			errs = append(errs, err)
-		}
-
-		if len(errs) != 0 {
-			return response.New(ctx, http.StatusBadRequest, helper.ErrToString(errs), true, nil)
-		}
-
-		if err := helper.GetDniReniec(&userData); err != nil {
-			if errors.Is(err, errores.ErrFindDniApiReniec) {
-				return response.New(ctx, http.StatusBadRequest, err.Error(), true, nil)
-			}
-			return response.New(ctx, http.StatusInternalServerError, err.Error(), true, nil)
-		}
-
-		userData.Active = true
-		userData.VerificationCode = gouid.String(8, gouid.UpperCaseAlphaNum)
-
 	default:
 		return response.New(
 			ctx, http.StatusBadRequest,

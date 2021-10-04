@@ -15,6 +15,6 @@ func ComplaintsBook(storage model.IComplaintsBook, app *echo.Echo) {
 	group := app.Group(fmt.Sprintf("%s/%s", env.Data.BaseUrl, "claims"))
 	group.POST("", complaintsBook.Add, middleware.Authorization().Client)
 	group.GET("", complaintsBook.GetAll, middleware.Authorization().Admin)
-	group.GET("/amount", complaintsBook.CountClaims, middleware.Authorization().Admin)
+	group.GET("/amount", complaintsBook.CountClaims, middleware.Authorization().ManagerAndAdmin)
 	group.POST("/response/:id", complaintsBook.ResponseClaim, middleware.Authorization().Admin)
 }

@@ -202,6 +202,14 @@ func (b *book) AddPromotion(ctx echo.Context) error {
 		)
 	}
 
+	if len(users) == 0 {
+		return response.New(
+			ctx, http.StatusOK,
+			"se agrego la nueva promocion del libro",
+			false, result,
+		)
+	}
+
 	var emails []string
 	for _, email := range users {
 		emails = append(emails, email.Email)

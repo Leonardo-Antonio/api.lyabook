@@ -19,14 +19,15 @@ func NewCollectionIndex(db *mongo.Database) *collection {
 }
 
 func (c *collection) createIndexUser() {
-	_, err := c.db.Collection(enum.Collection.Users).
+	var err error
+	_, err = c.db.Collection(enum.Collection.Users).
 		Indexes().
 		CreateOne(
 			context.TODO(),
 			mongo.IndexModel{
 				Keys: bson.D{
-					{Key: "email", Value: 1},
 					{Key: "dni", Value: 1},
+					{Key: "email", Value: 1},
 				},
 				Options: options.Index().SetUnique(true),
 			},
@@ -35,7 +36,6 @@ func (c *collection) createIndexUser() {
 		log.Fatalln(err)
 	}
 }
-
 func (c *collection) createIndexCategory() {
 	_, err := c.db.Collection(enum.Collection.Categories).
 		Indexes().

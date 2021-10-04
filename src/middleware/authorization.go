@@ -84,3 +84,28 @@ func (a *auth) Manager(f echo.HandlerFunc) echo.HandlerFunc {
 		return f(ctx)
 	}
 }
+
+func (a *auth) ManagerAndAdmin(f echo.HandlerFunc) echo.HandlerFunc {
+	return func(ctx echo.Context) error {
+		token := ctx.Request().Header.Get("Authorization")
+		claimUser, err := authorization.ValidateToken(token)
+		if err != nil {
+			return response.New(
+				ctx, http.StatusForbidden,
+				err.Error(),
+				true, nil,
+			)
+		}
+
+		if strings.EqualFold(claimUser.Rol, enum.Rol.Manager) || strings.EqualFold(claimUser.Rol, enum.Rol.Admin) {
+			return f(ctx)
+
+		}
+
+		return response.New(
+			ctx, http.StatusUnauthorized,
+			claimUser.Name+", usted no tiene acceso a esta sección",
+			true, nil,
+		)
+	}
+}

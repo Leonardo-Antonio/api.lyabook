@@ -20,7 +20,7 @@ func (b *book) CreateBook(book *entity.Book) {
 	book.Editorial = formatting.ToTitle(book.Editorial)
 	book.Author = formatting.ToTitle(book.Author)
 	book.Commentaries = nil
-	book.PriceBefore = 0
+	book.PriceBefore = book.PriceCurrent
 	book.Stars = 0
 }
 

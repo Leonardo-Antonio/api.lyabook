@@ -141,6 +141,7 @@ func (b *user) FindUsersWithEmail() (entity.Users, error) {
 		"email": bson.M{
 			"$exists": true,
 		},
+		"rol":    "Client",
 		"active": true,
 	}
 
