@@ -24,6 +24,7 @@ type (
 		Insert(user *entity.User) (*mongo.InsertOneResult, error)
 		Find(credentialsUser *entity.User, flag string) (entity.User, error)
 		VerifyAccount(email, code string) (entity.User, error)
+		VerifyAccountById(id primitive.ObjectID, code string) (entity.User, error)
 		Update(user *entity.User) (*mongo.UpdateResult, error)
 		FindUsersWithEmail() (entity.Users, error)
 		FindAllUsersByRol(rol string) (entity.Users, error)
@@ -101,6 +102,31 @@ func (u *user) Find(credentialsUser *entity.User, flag string) (entity.User, err
 func (u *user) VerifyAccount(email, code string) (entity.User, error) {
 	filter := bson.M{
 		"email":             email,
+		"verification_code": code,
+	}
+	var dataUser entity.User
+	if err := u.collection.FindOne(
+		context.TODO(), filter,
+	).Decode(&dataUser); err != nil {
+		return dataUser, err
+	}
+
+	dataUser.Active = true
+	result, err := u.Update(&dataUser)
+	if err != nil {
+		return dataUser, err
+	}
+
+	if result.ModifiedCount != 1 {
+		return dataUser, errors.New("no se pudo activar la cuenta <" + dataUser.Email + ">")
+	}
+
+	return dataUser, nil
+}
+
+func (u *user) VerifyAccountById(id primitive.ObjectID, code string) (entity.User, error) {
+	filter := bson.M{
+		"_id":               id,
 		"verification_code": code,
 	}
 	var dataUser entity.User

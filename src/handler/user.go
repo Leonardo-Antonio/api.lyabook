@@ -15,6 +15,7 @@ import (
 	"github.com/Leonardo-Antonio/api.lyabook/src/utils/errores"
 	"github.com/Leonardo-Antonio/api.lyabook/src/utils/formatting"
 	"github.com/Leonardo-Antonio/api.lyabook/src/utils/key"
+	"github.com/Leonardo-Antonio/api.lyabook/src/utils/reniec"
 	"github.com/Leonardo-Antonio/api.lyabook/src/utils/response"
 	"github.com/Leonardo-Antonio/api.lyabook/src/utils/send"
 	"github.com/Leonardo-Antonio/api.lyabook/src/utils/tmpl"
@@ -33,6 +34,24 @@ type user struct {
 
 func NewUser(storage model.IUser) *user {
 	return &user{storage}
+}
+
+func (u *user) SearchDni(ctx echo.Context) error {
+	dni := ctx.Param("dni")
+	if len(dni) != 8 {
+		return response.New(ctx, http.StatusBadRequest, "el dni no es valido", true, nil)
+	}
+
+	user := &entity.User{Dni: dni}
+	err := reniec.GetDniReniec(user)
+	if err != nil {
+		return response.New(ctx, http.StatusInternalServerError, err.Error(), true, nil)
+	}
+
+	user.Name = strings.Title(strings.ToLower(user.Name))
+	user.LastName = strings.Title(strings.ToLower(user.LastName))
+
+	return response.New(ctx, http.StatusOK, "dni encontrado con exito", false, user)
 }
 
 func (u *user) SignUp(ctx echo.Context) error {
@@ -112,7 +131,17 @@ func (u *user) SignUp(ctx echo.Context) error {
 	if flag == enum.TypeLogin.Email {
 		resp = "el usuario <" + userData.Email + "> fue creado correctamente"
 
-		if err := send.CodVerification(userData); err != nil {
+		verify := &entity.VerificationAccountAdmin{
+			Name: userData.Name,
+			Link: fmt.Sprintf("%s/verificacion-cuenta?id=%s", env.Data.AppClient, userData.Id.Hex()),
+		}
+
+		tpl, err := tmpl.Read("new-admin", verify)
+		if err != nil {
+			return response.New(ctx, http.StatusInternalServerError, err.Error(), true, nil)
+		}
+
+		if err := send.SendMany(tpl, fmt.Sprintf("Hola %s, verifica tu cuenta", userData.Name), userData.Email); err != nil {
 			return response.New(ctx, http.StatusInternalServerError, err.Error(), true, nil)
 		}
 	}
@@ -280,6 +309,36 @@ func (u *user) VerifyAccount(ctx echo.Context) error {
 	return response.New(
 		ctx, http.StatusCreated,
 		"se valido y creo correctamente su cuenta <"+userData.Email+">",
+		false, nil,
+	)
+}
+
+func (u *user) VerifyAccountById(ctx echo.Context) error {
+	id, err := primitive.ObjectIDFromHex(ctx.Param("id"))
+	if err != nil {
+		return response.New(ctx, http.StatusBadRequest, "el id no es valido", true, nil)
+	}
+	code := ctx.Param("code")
+
+	data, err := u.storage.VerifyAccountById(id, code)
+	if err != nil {
+		if errors.Is(err, mongo.ErrNoDocuments) {
+			return response.New(
+				ctx, http.StatusBadRequest,
+				"el código ingresado no es valido <"+code+">",
+				true, nil,
+			)
+		}
+		return response.New(ctx, http.StatusBadRequest, err.Error(), true, nil)
+	}
+
+	if err := send.EmailSignUp(data); err != nil {
+		return response.New(ctx, http.StatusInternalServerError, err.Error(), true, nil)
+	}
+
+	return response.New(
+		ctx, http.StatusCreated,
+		"se valido y creo correctamente su cuenta",
 		false, nil,
 	)
 }
