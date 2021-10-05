@@ -18,6 +18,7 @@ type Book struct {
 	Description  string               `bson:"description,omitempty" json:"description,omitempty" xml:"description,omitempty" validmor:"required"`
 	Commentaries []Commentary         `bson:"commentaries,omitempty" json:"commentaries,omitempty" xml:"commentaries,omitempty"`
 	Type         Format               `bson:"type,omitempty" json:"type,omitempty" xml:"type,omitempty"`
+	FormatBook   string               `bson:"format,omitempty" json:"format,omitempty" xml:"format,omitempty"`
 	Details      []string             `bson:"details,omitempty" json:"details,omitempty" xml:"details,omitempty" validmor:"required"`
 	Categories   []primitive.ObjectID `bson:"categories,omitempty" json:"categories,omitempty" xml:"categories,omitempty" validmor:"required"`
 	ImagesSrc    []string             `bson:"images_src,omitempty" json:"images_src,omitempty" xml:"images_src,omitempty" validmor:"required"`

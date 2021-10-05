@@ -1,7 +1,6 @@
 package formatting
 
 import (
-	"log"
 	"strings"
 )
 
@@ -35,6 +34,4 @@ func ReplaceSpecialCharacters(slug *string) {
 	searchAndRemplace("ü", "u")
 
 	*slug = strings.TrimRight(*slug, "-")
-
-	log.Println(*slug)
 }

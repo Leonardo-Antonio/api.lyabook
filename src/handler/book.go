@@ -62,8 +62,8 @@ func (b *book) Create(ctx echo.Context) error {
 		return response.New(ctx, http.StatusBadRequest, helper.ErrToString(errs), true, nil)
 	}
 
+	book.FormatBook = slug
 	valid.CreateBook(&book)
-
 	result, err := b.storageBook.Insert(&book)
 	if err != nil {
 		if mongo.IsDuplicateKeyError(err) {
@@ -305,6 +305,8 @@ func (b *book) CreateMany(ctx echo.Context) error {
 
 		book.Slug = book.Name
 		formatting.ReplaceSpecialCharacters(&book.Slug)
+		valid.CreateBook(book)
+		book.FormatBook = "df"
 	}
 
 	result, err := b.storageBook.InsertMany(books)
