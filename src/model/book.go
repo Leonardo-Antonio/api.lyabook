@@ -23,6 +23,7 @@ type (
 		FindBookById(id primitive.ObjectID) (book entity.Book, err error)
 		DeleteById(id primitive.ObjectID) (*mongo.UpdateResult, error)
 		InsertMany(books entity.Books) (*mongo.InsertManyResult, error)
+		FindByFormat(format string) (entity.Books, error)
 	}
 )
 
@@ -133,4 +134,23 @@ func (b *book) InsertMany(books entity.Books) (*mongo.InsertManyResult, error) {
 		return nil, err
 	}
 	return result, nil
+}
+
+func (b *book) FindByFormat(format string) (entity.Books, error) {
+	filter := bson.M{
+		"format": format,
+	}
+
+	cursor, err := b.collection.Find(context.TODO(), filter)
+	if err != nil {
+		return nil, err
+	}
+	defer cursor.Close(context.TODO())
+
+	var books entity.Books
+	if err := cursor.All(context.TODO(), &books); err != nil {
+		return nil, err
+	}
+
+	return books, nil
 }

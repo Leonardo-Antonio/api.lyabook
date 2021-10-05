@@ -26,11 +26,11 @@
 
         <div>
             <h1 style="font-family: Saira; font-weight: 600; font-size: 2.5rem; text-align: center;">Reporte de libros
-                sin stock</h1>
+                y su stock</h1>
         </div>
         <div class="py-4 w-full flex justify-center">
-            <span style="color: #CD7D7D; font-family: 'Roboto Condensed'; text-align: center;">Del {{ . }} al {{ .
-                }}</span>
+            <span style="color: #CD7D7D; font-family: 'Roboto Condensed'; text-align: center;">Se puede visualizar el
+                reporte de todos los libros, estado en la tienda y el stock en el almacen</span>
         </div>
     </div>
 
@@ -40,378 +40,35 @@
         <table class="table-fixed">
             <thead>
                 <tr class="h-12" style="background-color: #5E20E4; color: #fff; font-size: 1.2rem;">
-                    <th class="w-1/2" style="font-weight: bold;">Title</th>
-                    <th class="w-1/4" style="font-weight: bold;">Author</th>
-                    <th class="w-1/4" style="font-weight: bold;">Views</th>
+                    <th style="width: 40%;font-weight: bold;">Nombre</th>
+                    <th style="width: 20%;font-weight: bold;">Editorial</th>
+                    <th style="width: 10%;font-weight: bold;">Precio normal</th>
+                    <th style="width: 10%;font-weight: bold;">Precio oferta</th>
+                    <th style="width: 10%;font-weight: bold;">Tipo</th>
+                    <th style="width: 10%;font-weight: bold;">Activo</th>
                 </tr>
             </thead>
             <tbody>
+                {{ range $index, $book := . }}
                 <tr>
-                    <td>Intro to CSS</td>
-                    <td>Adam</td>
-                    <td>858</td>
+                    <td>{{ $book.Name }}</td>
+                    <td class="text-center py-2">{{ $book.Editorial }}</td>
+                    <td class="text-center py-2">S/{{ $book.PriceCurrent }}</td>
+                    <td class="text-center py-2">S/{{ $book.PriceBefore }}</td>
+                    <td class="text-center py-2">{{ $book.FormatBook }}</td>
+                    <td class="text-center py-2">
+                        <div class="flex justify-center">
+                            {{ if eq $book.Active true }}
+                            <div style="background-color: greenyellow; width: 1rem; height: 1rem; border-radius: 50px;">
+                            </div>
+                            {{ else }}
+                            <div style="background-color: red; width: 1rem; height: 1rem; border-radius: 50px;">
+                            </div>
+                            {{ end}}
+                        </div>
+                    </td>
                 </tr>
-                <tr class="bg-blue-200">
-                    <td>A Long and Winding Tour of the History of UI Frameworks and Tools and the Impact on Design</td>
-                    <td>Adam</td>
-                    <td>112</td>
-                </tr>
-                <tr>
-                    <td>Intro to JavaScript</td>
-                    <td>Chris</td>
-                    <td>1,280</td>
-                </tr>
-                <tr>
-                    <td>Intro to CSS</td>
-                    <td>Adam</td>
-                    <td>858</td>
-                </tr>
-                <tr class="bg-blue-200">
-                    <td>A Long and Winding Tour of the History of UI Frameworks and Tools and the Impact on Design</td>
-                    <td>Adam</td>
-                    <td>112</td>
-                </tr>
-                <tr>
-                    <td>Intro to JavaScript</td>
-                    <td>Chris</td>
-                    <td>1,280</td>
-                </tr><tr>
-                    <td>Intro to CSS</td>
-                    <td>Adam</td>
-                    <td>858</td>
-                </tr>
-                <tr class="bg-blue-200">
-                    <td>A Long and Winding Tour of the History of UI Frameworks and Tools and the Impact on Design</td>
-                    <td>Adam</td>
-                    <td>112</td>
-                </tr>
-                <tr>
-                    <td>Intro to JavaScript</td>
-                    <td>Chris</td>
-                    <td>1,280</td>
-                </tr><tr>
-                    <td>Intro to CSS</td>
-                    <td>Adam</td>
-                    <td>858</td>
-                </tr>
-                <tr class="bg-blue-200">
-                    <td>A Long and Winding Tour of the History of UI Frameworks and Tools and the Impact on Design</td>
-                    <td>Adam</td>
-                    <td>112</td>
-                </tr>
-                <tr>
-                    <td>Intro to JavaScript</td>
-                    <td>Chris</td>
-                    <td>1,280</td>
-                </tr><tr>
-                    <td>Intro to CSS</td>
-                    <td>Adam</td>
-                    <td>858</td>
-                </tr>
-                <tr class="bg-blue-200">
-                    <td>A Long and Winding Tour of the History of UI Frameworks and Tools and the Impact on Design</td>
-                    <td>Adam</td>
-                    <td>112</td>
-                </tr>
-                <tr>
-                    <td>Intro to JavaScript</td>
-                    <td>Chris</td>
-                    <td>1,280</td>
-                </tr><tr>
-                    <td>Intro to CSS</td>
-                    <td>Adam</td>
-                    <td>858</td>
-                </tr>
-                <tr class="bg-blue-200">
-                    <td>A Long and Winding Tour of the History of UI Frameworks and Tools and the Impact on Design</td>
-                    <td>Adam</td>
-                    <td>112</td>
-                </tr>
-                <tr>
-                    <td>Intro to JavaScript</td>
-                    <td>Chris</td>
-                    <td>1,280</td>
-                </tr><tr>
-                    <td>Intro to CSS</td>
-                    <td>Adam</td>
-                    <td>858</td>
-                </tr>
-                <tr class="bg-blue-200">
-                    <td>A Long and Winding Tour of the History of UI Frameworks and Tools and the Impact on Design</td>
-                    <td>Adam</td>
-                    <td>112</td>
-                </tr>
-                <tr>
-                    <td>Intro to JavaScript</td>
-                    <td>Chris</td>
-                    <td>1,280</td>
-                </tr><tr>
-                    <td>Intro to CSS</td>
-                    <td>Adam</td>
-                    <td>858</td>
-                </tr>
-                <tr class="bg-blue-200">
-                    <td>A Long and Winding Tour of the History of UI Frameworks and Tools and the Impact on Design</td>
-                    <td>Adam</td>
-                    <td>112</td>
-                </tr>
-                <tr>
-                    <td>Intro to JavaScript</td>
-                    <td>Chris</td>
-                    <td>1,280</td>
-                </tr><tr>
-                    <td>Intro to CSS</td>
-                    <td>Adam</td>
-                    <td>858</td>
-                </tr>
-                <tr class="bg-blue-200">
-                    <td>A Long and Winding Tour of the History of UI Frameworks and Tools and the Impact on Design</td>
-                    <td>Adam</td>
-                    <td>112</td>
-                </tr>
-                <tr>
-                    <td>Intro to JavaScript</td>
-                    <td>Chris</td>
-                    <td>1,280</td>
-                </tr><tr>
-                    <td>Intro to CSS</td>
-                    <td>Adam</td>
-                    <td>858</td>
-                </tr>
-                <tr class="bg-blue-200">
-                    <td>A Long and Winding Tour of the History of UI Frameworks and Tools and the Impact on Design</td>
-                    <td>Adam</td>
-                    <td>112</td>
-                </tr>
-                <tr>
-                    <td>Intro to JavaScript</td>
-                    <td>Chris</td>
-                    <td>1,280</td>
-                </tr><tr>
-                    <td>Intro to CSS</td>
-                    <td>Adam</td>
-                    <td>858</td>
-                </tr>
-                <tr class="bg-blue-200">
-                    <td>A Long and Winding Tour of the History of UI Frameworks and Tools and the Impact on Design</td>
-                    <td>Adam</td>
-                    <td>112</td>
-                </tr>
-                <tr>
-                    <td>Intro to JavaScript</td>
-                    <td>Chris</td>
-                    <td>1,280</td>
-                </tr><tr>
-                    <td>Intro to CSS</td>
-                    <td>Adam</td>
-                    <td>858</td>
-                </tr>
-                <tr class="bg-blue-200">
-                    <td>A Long and Winding Tour of the History of UI Frameworks and Tools and the Impact on Design</td>
-                    <td>Adam</td>
-                    <td>112</td>
-                </tr>
-                <tr>
-                    <td>Intro to JavaScript</td>
-                    <td>Chris</td>
-                    <td>1,280</td>
-                </tr><tr>
-                    <td>Intro to CSS</td>
-                    <td>Adam</td>
-                    <td>858</td>
-                </tr>
-                <tr class="bg-blue-200">
-                    <td>A Long and Winding Tour of the History of UI Frameworks and Tools and the Impact on Design</td>
-                    <td>Adam</td>
-                    <td>112</td>
-                </tr>
-                <tr>
-                    <td>Intro to JavaScript</td>
-                    <td>Chris</td>
-                    <td>1,280</td>
-                </tr><tr>
-                    <td>Intro to CSS</td>
-                    <td>Adam</td>
-                    <td>858</td>
-                </tr>
-                <tr class="bg-blue-200">
-                    <td>A Long and Winding Tour of the History of UI Frameworks and Tools and the Impact on Design</td>
-                    <td>Adam</td>
-                    <td>112</td>
-                </tr>
-                <tr>
-                    <td>Intro to JavaScript</td>
-                    <td>Chris</td>
-                    <td>1,280</td>
-                </tr><tr>
-                    <td>Intro to CSS</td>
-                    <td>Adam</td>
-                    <td>858</td>
-                </tr>
-                <tr class="bg-blue-200">
-                    <td>A Long and Winding Tour of the History of UI Frameworks and Tools and the Impact on Design</td>
-                    <td>Adam</td>
-                    <td>112</td>
-                </tr>
-                <tr>
-                    <td>Intro to JavaScript</td>
-                    <td>Chris</td>
-                    <td>1,280</td>
-                </tr><tr>
-                    <td>Intro to CSS</td>
-                    <td>Adam</td>
-                    <td>858</td>
-                </tr>
-                <tr class="bg-blue-200">
-                    <td>A Long and Winding Tour of the History of UI Frameworks and Tools and the Impact on Design</td>
-                    <td>Adam</td>
-                    <td>112</td>
-                </tr>
-                <tr>
-                    <td>Intro to JavaScript</td>
-                    <td>Chris</td>
-                    <td>1,280</td>
-                </tr><tr>
-                    <td>Intro to CSS</td>
-                    <td>Adam</td>
-                    <td>858</td>
-                </tr>
-                <tr class="bg-blue-200">
-                    <td>A Long and Winding Tour of the History of UI Frameworks and Tools and the Impact on Design</td>
-                    <td>Adam</td>
-                    <td>112</td>
-                </tr>
-                <tr>
-                    <td>Intro to JavaScript</td>
-                    <td>Chris</td>
-                    <td>1,280</td>
-                </tr><tr>
-                    <td>Intro to CSS</td>
-                    <td>Adam</td>
-                    <td>858</td>
-                </tr>
-                <tr class="bg-blue-200">
-                    <td>A Long and Winding Tour of the History of UI Frameworks and Tools and the Impact on Design</td>
-                    <td>Adam</td>
-                    <td>112</td>
-                </tr>
-                <tr>
-                    <td>Intro to JavaScript</td>
-                    <td>Chris</td>
-                    <td>1,280</td>
-                </tr><tr>
-                    <td>Intro to CSS</td>
-                    <td>Adam</td>
-                    <td>858</td>
-                </tr>
-                <tr class="bg-blue-200">
-                    <td>A Long and Winding Tour of the History of UI Frameworks and Tools and the Impact on Design</td>
-                    <td>Adam</td>
-                    <td>112</td>
-                </tr>
-                <tr>
-                    <td>Intro to JavaScript</td>
-                    <td>Chris</td>
-                    <td>1,280</td>
-                </tr><tr>
-                    <td>Intro to CSS</td>
-                    <td>Adam</td>
-                    <td>858</td>
-                </tr>
-                <tr class="bg-blue-200">
-                    <td>A Long and Winding Tour of the History of UI Frameworks and Tools and the Impact on Design</td>
-                    <td>Adam</td>
-                    <td>112</td>
-                </tr>
-                <tr>
-                    <td>Intro to JavaScript</td>
-                    <td>Chris</td>
-                    <td>1,280</td>
-                </tr><tr>
-                    <td>Intro to CSS</td>
-                    <td>Adam</td>
-                    <td>858</td>
-                </tr>
-                <tr class="bg-blue-200">
-                    <td>A Long and Winding Tour of the History of UI Frameworks and Tools and the Impact on Design</td>
-                    <td>Adam</td>
-                    <td>112</td>
-                </tr>
-                <tr>
-                    <td>Intro to JavaScript</td>
-                    <td>Chris</td>
-                    <td>1,280</td>
-                </tr><tr>
-                    <td>Intro to CSS</td>
-                    <td>Adam</td>
-                    <td>858</td>
-                </tr>
-                <tr class="bg-blue-200">
-                    <td>A Long and Winding Tour of the History of UI Frameworks and Tools and the Impact on Design</td>
-                    <td>Adam</td>
-                    <td>112</td>
-                </tr>
-                <tr>
-                    <td>Intro to JavaScript</td>
-                    <td>Chris</td>
-                    <td>1,280</td>
-                </tr><tr>
-                    <td>Intro to CSS</td>
-                    <td>Adam</td>
-                    <td>858</td>
-                </tr>
-                <tr class="bg-blue-200">
-                    <td>A Long and Winding Tour of the History of UI Frameworks and Tools and the Impact on Design</td>
-                    <td>Adam</td>
-                    <td>112</td>
-                </tr>
-                <tr>
-                    <td>Intro to JavaScript</td>
-                    <td>Chris</td>
-                    <td>1,280</td>
-                </tr><tr>
-                    <td>Intro to CSS</td>
-                    <td>Adam</td>
-                    <td>858</td>
-                </tr>
-                <tr class="bg-blue-200">
-                    <td>A Long and Winding Tour of the History of UI Frameworks and Tools and the Impact on Design</td>
-                    <td>Adam</td>
-                    <td>112</td>
-                </tr>
-                <tr>
-                    <td>Intro to JavaScript</td>
-                    <td>Chris</td>
-                    <td>1,280</td>
-                </tr><tr>
-                    <td>Intro to CSS</td>
-                    <td>Adam</td>
-                    <td>858</td>
-                </tr>
-                <tr class="bg-blue-200">
-                    <td>A Long and Winding Tour of the History of UI Frameworks and Tools and the Impact on Design</td>
-                    <td>Adam</td>
-                    <td>112</td>
-                </tr>
-                <tr>
-                    <td>Intro to JavaScript</td>
-                    <td>Chris</td>
-                    <td>1,280</td>
-                </tr><tr>
-                    <td>Intro to CSS</td>
-                    <td>Adam</td>
-                    <td>858</td>
-                </tr>
-                <tr class="bg-blue-200">
-                    <td>A Long and Winding Tour of the History of UI Frameworks and Tools and the Impact on Design</td>
-                    <td>Adam</td>
-                    <td>112</td>
-                </tr>
-                <tr>
-                    <td>Intro to JavaScript</td>
-                    <td>Chris</td>
-                    <td>1,280</td>
-                </tr>
+                {{ end }}
             </tbody>
         </table>
     </div>
