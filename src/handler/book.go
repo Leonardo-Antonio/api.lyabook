@@ -20,12 +20,13 @@ import (
 )
 
 type book struct {
-	storageBook model.Ibook
-	storageUser model.IUser
+	storageBook     model.Ibook
+	storageUser     model.IUser
+	storageCategory model.ICategory
 }
 
-func NewBook(storageBook model.Ibook, storageUser model.IUser) *book {
-	return &book{storageBook, storageUser}
+func NewBook(storageBook model.Ibook, storageUser model.IUser, storageCategory model.ICategory) *book {
+	return &book{storageBook, storageUser, storageCategory}
 }
 
 func (b *book) Create(ctx echo.Context) error {
@@ -36,6 +37,22 @@ func (b *book) Create(ctx echo.Context) error {
 	var book entity.Book
 	if err := ctx.Bind(&book); err != nil {
 		return response.New(ctx, http.StatusBadRequest, err.Error(), true, nil)
+	}
+
+	var idsInvalid []string
+	for _, categotyId := range book.Categories {
+		_, err := b.storageCategory.SearchById(categotyId)
+		if err != nil {
+			if errors.Is(err, mongo.ErrNoDocuments) {
+				idsInvalid = append(idsInvalid, categotyId.Hex())
+			} else {
+				return response.New(ctx, http.StatusInternalServerError, err.Error(), true, nil)
+			}
+		}
+	}
+
+	if len(idsInvalid) != 0 {
+		return response.New(ctx, http.StatusBadRequest, "los ids ingresados no son validos", true, idsInvalid)
 	}
 
 	book.Slug = book.Name
@@ -95,6 +112,22 @@ func (b *book) Edit(ctx echo.Context) error {
 	var book entity.Book
 	if err := ctx.Bind(&book); err != nil {
 		return response.New(ctx, http.StatusBadRequest, err.Error(), true, nil)
+	}
+
+	var idsInvalid []string
+	for _, categotyId := range book.Categories {
+		_, err := b.storageCategory.SearchById(categotyId)
+		if err != nil {
+			if errors.Is(err, mongo.ErrNoDocuments) {
+				idsInvalid = append(idsInvalid, categotyId.Hex())
+			} else {
+				return response.New(ctx, http.StatusInternalServerError, err.Error(), true, nil)
+			}
+		}
+	}
+
+	if len(idsInvalid) != 0 {
+		return response.New(ctx, http.StatusBadRequest, "los ids ingresados no son validos", true, idsInvalid)
 	}
 
 	book.Slug = book.Name
@@ -274,6 +307,23 @@ func (b *book) CreateMany(ctx echo.Context) error {
 	}
 
 	for _, book := range books {
+
+		var idsInvalid []string
+		for _, categotyId := range book.Categories {
+			_, err := b.storageCategory.SearchById(categotyId)
+			if err != nil {
+				if errors.Is(err, mongo.ErrNoDocuments) {
+					idsInvalid = append(idsInvalid, categotyId.Hex())
+				} else {
+					return response.New(ctx, http.StatusInternalServerError, err.Error(), true, nil)
+				}
+			}
+		}
+
+		if len(idsInvalid) != 0 {
+			return response.New(ctx, http.StatusBadRequest, "los ids ingresados no son validos", true, idsInvalid)
+		}
+
 		var errs []error
 		valid := valid.Book()
 		valid.CreateBook(book)

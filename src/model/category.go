@@ -21,6 +21,7 @@ type (
 		InsertMany(categories []*entity.Category) (*mongo.InsertManyResult, error)
 		Update(category *entity.Category) (*mongo.UpdateResult, error)
 		DeleteById(id primitive.ObjectID) (*mongo.UpdateResult, error)
+		SearchById(id primitive.ObjectID) (entity.Category, error)
 	}
 )
 
@@ -95,4 +96,18 @@ func (c *category) DeleteById(id primitive.ObjectID) (*mongo.UpdateResult, error
 	}
 
 	return result, nil
+}
+
+func (c *category) SearchById(id primitive.ObjectID) (entity.Category, error) {
+	filter := bson.M{
+		"_id":    &id,
+		"active": true,
+	}
+
+	var data entity.Category
+	if err := c.collection.FindOne(context.TODO(), filter).Decode(&data); err != nil {
+		return data, err
+	}
+
+	return data, nil
 }
