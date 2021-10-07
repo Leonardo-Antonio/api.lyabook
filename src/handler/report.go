@@ -1,8 +1,10 @@
 package handler
 
 import (
+	"fmt"
 	"net/http"
 	"strings"
+	"time"
 
 	"github.com/Leonardo-Antonio/api.lyabook/src/model"
 	"github.com/Leonardo-Antonio/api.lyabook/src/utils/response"
@@ -41,11 +43,14 @@ func (r *report) AllBooks(ctx echo.Context) error {
 		return response.New(ctx, http.StatusInternalServerError, err.Error(), true, nil)
 	}
 
-	//Your Pdf Name
-	err = pdfg.WriteFile("reports/stock.pdf")
+	err = pdfg.WriteFile("reports/all-books_stock.pdf")
 	if err != nil {
 		return response.New(ctx, http.StatusInternalServerError, err.Error(), true, nil)
 	}
 
-	return ctx.Attachment("reports/stock.pdf", "stock.pdf")
+	currentData := time.Now()
+	return ctx.Attachment(
+		"reports/stock.pdf",
+		fmt.Sprintf("%d-%d-%d.pdf", currentData.Day(), currentData.Month(), currentData.Year()),
+	)
 }
