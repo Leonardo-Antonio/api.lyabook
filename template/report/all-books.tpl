@@ -44,7 +44,7 @@
                     <th style="width: 20%;font-weight: bold;">Editorial</th>
                     <th style="width: 10%;font-weight: bold;">Precio normal</th>
                     <th style="width: 10%;font-weight: bold;">Precio oferta</th>
-                    <th style="width: 10%;font-weight: bold;">Stock</th>
+                    <th style="width: 10%;font-weight: bold;">Tipo</th>
                     <th style="width: 10%;font-weight: bold;">Activo</th>
                 </tr>
             </thead>
@@ -55,7 +55,7 @@
                     <td class="text-center py-2">{{ $book.Editorial }}</td>
                     <td class="text-center py-2">S/{{ $book.PriceCurrent }}</td>
                     <td class="text-center py-2">S/{{ $book.PriceBefore }}</td>
-                    <td class="text-center py-2">{{ $book.Type.Fisico.Stock }}</td>
+                    <td class="text-center py-2">{{ $book.FormatBook }}</td>
                     <td class="text-center py-2">
                         <div class="flex justify-center">
                             {{ if eq $book.Active true }}

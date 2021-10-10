@@ -4,9 +4,11 @@ import (
 	"errors"
 	"fmt"
 	"net/http"
+	"strconv"
 	"strings"
 	"time"
 
+	"github.com/Leonardo-Antonio/api.lyabook/src/entity"
 	"github.com/Leonardo-Antonio/api.lyabook/src/model"
 	"github.com/Leonardo-Antonio/api.lyabook/src/utils/response"
 	"github.com/Leonardo-Antonio/api.lyabook/src/utils/tmpl"
@@ -24,17 +26,21 @@ func NewReport(storage model.Ibook) *report {
 }
 
 func (r *report) AllBooks(ctx echo.Context) error {
-	books, err := r.storage.FindByFormat("df")
+	var data entity.ReportBooks
+	var err error
+	data.Books, err = r.storage.FindByFormat("df")
 	if err != nil {
 		return response.New(ctx, http.StatusInternalServerError, err.Error(), true, nil)
 	}
+
+	data.Date = time.Now().Format(time.RFC1123)
 
 	pdfg, err := wkhtmltopdf.NewPDFGenerator()
 	if err != nil {
 		return response.New(ctx, http.StatusInternalServerError, err.Error(), true, nil)
 	}
 
-	tpl, err := tmpl.Report("stock.tpl", books) // time.Now().Format(time.RFC1123)
+	tpl, err := tmpl.Report("all-books.tpl", data) // time.Now().Format(time.RFC1123)
 	if err != nil {
 		return response.New(ctx, http.StatusInternalServerError, err.Error(), true, nil)
 	}
@@ -52,7 +58,7 @@ func (r *report) AllBooks(ctx echo.Context) error {
 
 	currentData := time.Now()
 	return ctx.Attachment(
-		"reports/stock.pdf",
+		"reports/all-books_stock.pdf",
 		fmt.Sprintf("%d-%d-%d.pdf", currentData.Day(), currentData.Month(), currentData.Year()),
 	)
 }
@@ -80,5 +86,81 @@ func (r *report) SearchByFormat(ctx echo.Context) error {
 		ctx, http.StatusOK,
 		"ok",
 		false, books,
+	)
+}
+
+func (r *report) SearchBookByStock(ctx echo.Context) error {
+	stock, err := strconv.Atoi(ctx.Param("stock"))
+	if err != nil {
+		return response.New(
+			ctx, http.StatusBadRequest,
+			fmt.Sprintf("el stock ingresado no es valido <%s>", ctx.Param("stock")),
+			true, nil,
+		)
+	}
+
+	books, err := r.storage.FindByStock(uint(stock))
+	if err != nil {
+		if errors.Is(err, mongo.ErrNoDocuments) {
+			return response.New(
+				ctx, http.StatusNoContent,
+				"no hay datos",
+				true, nil,
+			)
+		}
+		return response.New(
+			ctx, http.StatusInternalServerError,
+			err.Error(),
+			true, nil,
+		)
+	}
+
+	return response.New(
+		ctx, http.StatusOK,
+		"ok",
+		false, books,
+	)
+}
+
+func (r *report) ReportBooksByStock(ctx echo.Context) error {
+	stock, err := strconv.Atoi(ctx.Param("stock"))
+	if err != nil {
+		return response.New(
+			ctx, http.StatusBadRequest,
+			fmt.Sprintf("el stock ingresado no es valido <%s>", ctx.Param("stock")),
+			true, nil,
+		)
+	}
+
+	var data entity.ReportBooks
+	data.Books, err = r.storage.FindByStock(uint(stock))
+	if err != nil {
+		return response.New(ctx, http.StatusInternalServerError, err.Error(), true, nil)
+	}
+	data.Date = time.Now().Format(time.RFC1123)
+
+	pdfg, err := wkhtmltopdf.NewPDFGenerator()
+	if err != nil {
+		return response.New(ctx, http.StatusInternalServerError, err.Error(), true, nil)
+	}
+
+	tpl, err := tmpl.Report("stock.tpl", data) // time.Now().Format(time.RFC1123)
+	if err != nil {
+		return response.New(ctx, http.StatusInternalServerError, err.Error(), true, nil)
+	}
+	pdfg.AddPage(wkhtmltopdf.NewPageReader(strings.NewReader(tpl)))
+
+	err = pdfg.Create()
+	if err != nil {
+		return response.New(ctx, http.StatusInternalServerError, err.Error(), true, nil)
+	}
+
+	err = pdfg.WriteFile("reports/stock.pdf")
+	if err != nil {
+		return response.New(ctx, http.StatusInternalServerError, err.Error(), true, nil)
+	}
+
+	return ctx.File(
+		"reports/stock.pdf",
 	)
 }

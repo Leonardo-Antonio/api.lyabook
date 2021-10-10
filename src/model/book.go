@@ -24,6 +24,7 @@ type (
 		DeleteById(id primitive.ObjectID) (*mongo.UpdateResult, error)
 		InsertMany(books entity.Books) (*mongo.InsertManyResult, error)
 		FindByFormat(format string) (entity.Books, error)
+		FindByStock(stock uint) (entity.Books, error)
 	}
 )
 
@@ -139,6 +140,27 @@ func (b *book) InsertMany(books entity.Books) (*mongo.InsertManyResult, error) {
 func (b *book) FindByFormat(format string) (entity.Books, error) {
 	filter := bson.M{
 		"format": format,
+	}
+
+	cursor, err := b.collection.Find(context.TODO(), filter)
+	if err != nil {
+		return nil, err
+	}
+	defer cursor.Close(context.TODO())
+
+	var books entity.Books
+	if err := cursor.All(context.TODO(), &books); err != nil {
+		return nil, err
+	}
+
+	return books, nil
+}
+
+func (b *book) FindByStock(stock uint) (entity.Books, error) {
+	filter := bson.M{
+		"type.fisico.stock": bson.M{
+			"$lte": stock,
+		},
 	}
 
 	cursor, err := b.collection.Find(context.TODO(), filter)

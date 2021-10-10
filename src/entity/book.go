@@ -29,3 +29,8 @@ type Book struct {
 }
 
 type Books []*Book
+
+type ReportBooks struct {
+	Books []*Book
+	Date  string
+}
