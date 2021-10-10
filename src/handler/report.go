@@ -1,6 +1,7 @@
 package handler
 
 import (
+	"errors"
 	"fmt"
 	"net/http"
 	"strings"
@@ -11,6 +12,7 @@ import (
 	"github.com/Leonardo-Antonio/api.lyabook/src/utils/tmpl"
 	"github.com/SebastiaanKlippert/go-wkhtmltopdf"
 	"github.com/labstack/echo/v4"
+	"go.mongodb.org/mongo-driver/mongo"
 )
 
 type report struct {
@@ -52,5 +54,31 @@ func (r *report) AllBooks(ctx echo.Context) error {
 	return ctx.Attachment(
 		"reports/stock.pdf",
 		fmt.Sprintf("%d-%d-%d.pdf", currentData.Day(), currentData.Month(), currentData.Year()),
+	)
+}
+
+func (r *report) SearchByFormat(ctx echo.Context) error {
+	format := ctx.Param("format")
+
+	books, err := r.storage.FindByFormat(format)
+	if err != nil {
+		if errors.Is(err, mongo.ErrNoDocuments) {
+			return response.New(
+				ctx, http.StatusNoContent,
+				"no hay datos",
+				true, nil,
+			)
+		}
+		return response.New(
+			ctx, http.StatusInternalServerError,
+			err.Error(),
+			true, nil,
+		)
+	}
+
+	return response.New(
+		ctx, http.StatusOK,
+		"ok",
+		false, books,
 	)
 }

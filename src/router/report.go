@@ -13,4 +13,5 @@ func Report(storage model.Ibook, app *echo.Echo) {
 	handler := handler.NewReport(storage)
 	group := app.Group(fmt.Sprintf("%s/%s", env.Data.BaseUrl, "reports"))
 	group.GET("/books", handler.AllBooks)
+	group.GET("/books/:format", handler.SearchByFormat)
 }
