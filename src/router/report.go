@@ -15,4 +15,6 @@ func Report(storage model.Ibook, app *echo.Echo) {
 	group.GET("/books", handler.AllBooks)
 	group.GET("/books/stock/:stock", handler.ReportBooksByStock)
 	group.GET("/data/books/stock/:stock", handler.SearchBookByStock)
+	group.GET("/data/new/books/:limit", handler.NewBooks)
+	group.GET("/new/books/:limit", handler.ReportNewBooks)
 }

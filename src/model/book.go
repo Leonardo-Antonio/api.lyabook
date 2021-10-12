@@ -9,6 +9,7 @@ import (
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
+	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
 type (
@@ -25,6 +26,7 @@ type (
 		InsertMany(books entity.Books) (*mongo.InsertManyResult, error)
 		FindByFormat(format string) (entity.Books, error)
 		FindByStock(stock uint) (entity.Books, error)
+		NewBooksOfTheMonth(stock uint) (entity.Books, error)
 	}
 )
 
@@ -164,6 +166,24 @@ func (b *book) FindByStock(stock uint) (entity.Books, error) {
 	}
 
 	cursor, err := b.collection.Find(context.TODO(), filter)
+	if err != nil {
+		return nil, err
+	}
+	defer cursor.Close(context.TODO())
+
+	var books entity.Books
+	if err := cursor.All(context.TODO(), &books); err != nil {
+		return nil, err
+	}
+
+	return books, nil
+}
+
+func (b *book) NewBooksOfTheMonth(limit uint) (entity.Books, error) {
+	findOptions := options.Find()
+	findOptions.SetSort(bson.M{"created_at": -1}).SetLimit(int64(limit))
+
+	cursor, err := b.collection.Find(context.TODO(), bson.M{}, findOptions)
 	if err != nil {
 		return nil, err
 	}

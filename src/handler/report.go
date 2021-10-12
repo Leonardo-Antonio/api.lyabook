@@ -164,3 +164,86 @@ func (r *report) ReportBooksByStock(ctx echo.Context) error {
 		"reports/stock.pdf",
 	)
 }
+
+func (r *report) NewBooks(ctx echo.Context) error {
+	limit, err := strconv.Atoi(ctx.Param("limit"))
+	if err != nil {
+		return response.New(
+			ctx, http.StatusBadRequest,
+			fmt.Sprintf("el limite que agrego no es valido <%s>", ctx.Param("limit")),
+			true, nil,
+		)
+	}
+
+	books, err := r.storage.NewBooksOfTheMonth(uint(limit))
+	if err != nil {
+		if errors.Is(err, mongo.ErrNoDocuments) {
+			return response.New(
+				ctx, http.StatusNoContent,
+				"no hay libros registrados",
+				true, nil,
+			)
+		}
+		return response.New(
+			ctx, http.StatusInternalServerError,
+			err.Error(),
+			true, nil,
+		)
+	}
+
+	return response.New(ctx, http.StatusOK, "ok", false, books)
+}
+
+func (r *report) ReportNewBooks(ctx echo.Context) error {
+	limit, err := strconv.Atoi(ctx.Param("limit"))
+	if err != nil {
+		return response.New(
+			ctx, http.StatusBadRequest,
+			fmt.Sprintf("el limite que agrego no es valido <%s>", ctx.Param("limit")),
+			true, nil,
+		)
+	}
+
+	var data entity.ReportBooks
+	data.Books, err = r.storage.NewBooksOfTheMonth(uint(limit))
+	if err != nil {
+		if errors.Is(err, mongo.ErrNoDocuments) {
+			return response.New(
+				ctx, http.StatusNoContent,
+				"no hay libros registrados",
+				true, nil,
+			)
+		}
+		return response.New(
+			ctx, http.StatusInternalServerError,
+			err.Error(),
+			true, nil,
+		)
+	}
+	data.Date = time.Now().Format(time.RFC1123)
+
+	pdfg, err := wkhtmltopdf.NewPDFGenerator()
+	if err != nil {
+		return response.New(ctx, http.StatusInternalServerError, err.Error(), true, nil)
+	}
+
+	tpl, err := tmpl.Report("new-books.tpl", data) // time.Now().Format(time.RFC1123)
+	if err != nil {
+		return response.New(ctx, http.StatusInternalServerError, err.Error(), true, nil)
+	}
+	pdfg.AddPage(wkhtmltopdf.NewPageReader(strings.NewReader(tpl)))
+
+	err = pdfg.Create()
+	if err != nil {
+		return response.New(ctx, http.StatusInternalServerError, err.Error(), true, nil)
+	}
+
+	err = pdfg.WriteFile("reports/new-books.pdf")
+	if err != nil {
+		return response.New(ctx, http.StatusInternalServerError, err.Error(), true, nil)
+	}
+
+	return ctx.File(
+		"reports/new-books.pdf",
+	)
+}
