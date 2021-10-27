@@ -7,6 +7,7 @@ type collection struct {
 	Categories      string
 	ShoppingCart    string
 	ComplaintsBooks string
+	Payment         string
 }
 
 var Collection = &collection{
@@ -16,4 +17,5 @@ var Collection = &collection{
 	Categories:      "categories",
 	ShoppingCart:    "shopping_cart",
 	ComplaintsBooks: "complaints_books",
+	Payment:         "payments",
 }

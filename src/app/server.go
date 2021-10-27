@@ -59,6 +59,7 @@ func (s *server) Routers() {
 	router.ComplaintsBook(model.NewComplaintsBook(db), s.app)
 	router.Report(model.NewBook(db), s.app)
 	router.Manager(s.app)
+	router.Payment(model.NewPayment(db), s.app)
 }
 
 func (s *server) Listeing() {
