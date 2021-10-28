@@ -16,7 +16,7 @@ type (
 	}
 
 	IPayment interface {
-		GetById(id primitive.ObjectID) ([]entity.PaymentClient, error)
+		GetById(id primitive.ObjectID) ([]*entity.PaymentClient, error)
 	}
 )
 
@@ -24,11 +24,19 @@ func NewPayment(db *mongo.Database) *payment {
 	return &payment{collection: db.Collection(enum.Collection.Payment)}
 }
 
-func (p *payment) GetById(id primitive.ObjectID) ([]entity.PaymentClient, error) {
+func (p *payment) GetById(id primitive.ObjectID) ([]*entity.PaymentClient, error) {
 	pipeline := []bson.M{
 		{
 			"$match": bson.M{
 				"_id": id,
+			},
+		},
+		{
+			"$lookup": bson.M{
+				"from":         "users",
+				"localField":   "id_client",
+				"foreignField": "_id",
+				"as":           "client",
 			},
 		},
 	}
@@ -39,8 +47,8 @@ func (p *payment) GetById(id primitive.ObjectID) ([]entity.PaymentClient, error)
 	}
 	defer cursor.Close(context.TODO())
 
-	var paymentClient []entity.PaymentClient
-	if err := cursor.All(context.TODO(), paymentClient); err != nil {
+	var paymentClient []*entity.PaymentClient
+	if err := cursor.All(context.TODO(), &paymentClient); err != nil {
 		return nil, err
 	}
 

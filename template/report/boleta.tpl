@@ -20,36 +20,59 @@
 
                 <div>
                     <h1 style="font-family: Saira; font-weight: 600;font-size: 2rem;line-height: 2.5;">Libreria
-                        <span style="color: #5E20E4;">“LyaBook”</span></h1>
+                        <span style="color: #5E20E4;">“LyaBook”</span>
+                    </h1>
 
                     <div>
                         <div>
                             <span
                                 style="font-family: Roboto;font-weight: normal;color: rgba(127, 127, 127, 1);font-weight: normal;">Señor(a):
-                            </span> <span style="color: #CD7D7D; font-family: 'Roboto Condensed';">Alexandra Navarro
-                                Navarro</span>
+                            </span> <span style="color: #CD7D7D; font-family: 'Roboto Condensed';">
+                                {{ range . }}
+                                    {{ range .Client }}
+                                        {{ .Name }} {{ .LastName }}
+                                    {{ end }}
+                                {{ end }}
+                            </span>
                         </div>
 
                         <div>
                             <span
                                 style="font-family: Roboto;font-weight: normal;color: rgba(127, 127, 127, 1);font-weight: normal;">DNI:
-                            </span> <span style="color: #CD7D7D; font-family: 'Roboto Condensed';">Alexandra Navarro
-                                Navarro</span>
+                            </span> <span style="color: #CD7D7D; font-family: 'Roboto Condensed';">
+                                {{ range . }}
+                                    {{ range .Client }}
+                                        {{ if eq .Dni "" }}
+                                            ---
+                                        {{ else }}
+                                            {{ .Dni }}
+                                        {{ end }}
+                                    {{ end }}
+                                {{ end }}
+                            </span>
                         </div>
 
                         <div>
                             <span
                                 style="font-family: Roboto;font-weight: normal;color: rgba(127, 127, 127, 1);font-weight: normal;">Email:
-                            </span> <span style="color: #CD7D7D; font-family: 'Roboto Condensed';">Alexandra Navarro
-                                Navarro</span>
+                            </span> <span style="color: #CD7D7D; font-family: 'Roboto Condensed';">
+                                {{ range . }}
+                                    {{ range .Client }}
+                                        {{ if eq .Email "" }}
+                                            ---
+                                        {{ else }}
+                                            {{ .Email }}
+                                        {{ end }}
+                                    {{ end }}
+                                {{ end }}
+                            </span>
                         </div>
                     </div>
                 </div>
             </div>
 
-            <div class="p-4 flex items-center flex-col">
+            <div class="p-4">
                 <div class="w-full h-full flex items-center">
-
                     <div>
                         <div style="text-align: center;">
                             <h1 style="font-family: Saira; font-weight: 600;font-size: 1.5rem;line-height: 1.5;">R.U.C.
@@ -59,7 +82,10 @@
                                 VENTA
                             </h1>
                             <h1 style="font-family: Saira; font-weight: 600;font-size: 1.5rem;line-height: 1.5;">N°
-                                485454153453421</h1>
+                                {{ range . }}
+                                    {{ .IdPayment }}
+                                {{ end }}
+                            </h1>
                         </div>
 
                         <div>
@@ -67,8 +93,11 @@
                                 <span
                                     style="font-family: Roboto;font-weight: normal;color: rgba(127, 127, 127, 1);font-weight: normal;">Fecha
                                     de emisión:
-                                </span> <span style="color: #CD7D7D; font-family: 'Roboto Condensed';">25/12/01
-                                    10:00am</span>
+                                </span> <span style="color: #CD7D7D; font-family: 'Roboto Condensed';">
+                                    {{ range . }}
+                                        {{ .CreateAtString }}
+                                    {{ end }}
+                                </span>
                             </div>
                         </div>
                     </div>
@@ -84,24 +113,43 @@
             <thead>
                 <tr class="h-12" style="background-color: #5E20E4; color: #fff; font-size: 1.2rem;">
                     <th style="width: 10%;font-weight: bold;">N°</th>
-                    <th style="width: 50%;font-weight: bold;">Descripción</th>
-                    <th style="width: 20%;font-weight: bold;">Precio unitario</th>
+                    <th style="width: 40%;font-weight: bold;">Descripción</th>
+                    <th style="width: 20%;font-weight: bold;">Tipo</th>
+                    <th style="width: 10%;font-weight: bold;">Precio unitario</th>
                     <th style="width: 10%;font-weight: bold;">Cantidad</th>
                     <th style="width: 10%;font-weight: bold;">Importe</th>
                 </tr>
             </thead>
             <tbody>
-                {{ range $index, $book := .Books }}
+                {{ range . }}
+                    {{ range $index, $book := .Products}}
                 <tr>
-                    <td>{{ $book.Name }}</td>
-                    <td class="text-center py-2">{{ $book.Editorial }}</td>
-                    <td class="text-center py-2">S/{{ $book.PriceCurrent }}</td>
-                    <td class="text-center py-2">S/{{ $book.PriceBefore }}</td>
-                    <td class="text-center py-2">{{ $book.FormatBook }}</td>
+                    <td>{{ $index }}</td>
+                    <td class="text-center py-2">{{$book.Title}}</td>
+                    <td class="text-center py-2">
+                        {{ if eq $book.Description "d" }}
+                            Digital
+                        {{ else }}
+                            {{ if eq $book.Description "f" }}
+                                Fisico
+                            {{ else }}
+                                Fisico y Digital
+                            {{ end }}
+                        {{ end }}
+                    </td>
+                    <td class="text-center py-2">S/. {{$book.PriceUnit}}</td>
+                    <td class="text-center py-2">{{$book.Quantity}}</td>
+                    <td class="text-center py-2">S/. {{$book.Importe}}</td>
                 </tr>
+                    {{ end }}
                 {{ end }}
             </tbody>
         </table>
+        <h1>
+            {{ range . }}
+                <strong>Total a pagar</strong>:  S/. {{ .TotalPagar }}
+            {{ end }}
+        </h1>
     </div>
 </body>
 
