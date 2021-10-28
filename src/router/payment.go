@@ -12,5 +12,5 @@ import (
 func Payment(storage model.IPayment, app *echo.Echo) {
 	handler := handler.NewPayment(storage)
 	group := app.Group(fmt.Sprintf("%s/%s", env.Data.BaseUrl, "payments"))
-	group.GET("/boleta", handler.GetById)
+	group.GET("/boleta/:id", handler.GetById)
 }

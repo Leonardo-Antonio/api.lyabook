@@ -22,7 +22,7 @@ func NewPayment(storage model.IPayment) *payment {
 }
 
 func (p *payment) GetById(c echo.Context) error {
-	id, err := primitive.ObjectIDFromHex("6179001e18a80cce7304bd4b")
+	id, err := primitive.ObjectIDFromHex(c.Param("id"))
 	if err != nil {
 		return response.New(c, http.StatusBadRequest, err.Error(), true, nil)
 	}
