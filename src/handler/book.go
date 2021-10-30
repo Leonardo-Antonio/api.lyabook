@@ -40,11 +40,11 @@ func (b *book) Create(ctx echo.Context) error {
 	}
 
 	var idsInvalid []string
-	for _, categotyId := range book.Categories {
-		_, err := b.storageCategory.SearchById(categotyId)
+	for _, categotyEan := range book.Categories {
+		_, err := b.storageCategory.SearchByEan(categotyEan)
 		if err != nil {
 			if errors.Is(err, mongo.ErrNoDocuments) {
-				idsInvalid = append(idsInvalid, categotyId.Hex())
+				idsInvalid = append(idsInvalid, categotyEan)
 			} else {
 				return response.New(ctx, http.StatusInternalServerError, err.Error(), true, nil)
 			}
@@ -52,7 +52,7 @@ func (b *book) Create(ctx echo.Context) error {
 	}
 
 	if len(idsInvalid) != 0 {
-		return response.New(ctx, http.StatusBadRequest, "los ids ingresados no son validos", true, idsInvalid)
+		return response.New(ctx, http.StatusBadRequest, "el 'ean' de las categorias ingresados no son validos o no existen", true, idsInvalid)
 	}
 
 	book.Slug = book.Name
@@ -115,11 +115,11 @@ func (b *book) Edit(ctx echo.Context) error {
 	}
 
 	var idsInvalid []string
-	for _, categotyId := range book.Categories {
-		_, err := b.storageCategory.SearchById(categotyId)
+	for _, categotyEan := range book.Categories {
+		_, err := b.storageCategory.SearchByEan(categotyEan)
 		if err != nil {
 			if errors.Is(err, mongo.ErrNoDocuments) {
-				idsInvalid = append(idsInvalid, categotyId.Hex())
+				idsInvalid = append(idsInvalid, categotyEan)
 			} else {
 				return response.New(ctx, http.StatusInternalServerError, err.Error(), true, nil)
 			}
@@ -127,7 +127,7 @@ func (b *book) Edit(ctx echo.Context) error {
 	}
 
 	if len(idsInvalid) != 0 {
-		return response.New(ctx, http.StatusBadRequest, "los ids ingresados no son validos", true, idsInvalid)
+		return response.New(ctx, http.StatusBadRequest, "el 'ean' de las categorias ingresados no son validos o no existen", true, idsInvalid)
 	}
 
 	book.Slug = book.Name
@@ -309,11 +309,11 @@ func (b *book) CreateMany(ctx echo.Context) error {
 	for _, book := range books {
 
 		var idsInvalid []string
-		for _, categotyId := range book.Categories {
-			_, err := b.storageCategory.SearchById(categotyId)
+		for _, categotyEan := range book.Categories {
+			_, err := b.storageCategory.SearchByEan(categotyEan)
 			if err != nil {
 				if errors.Is(err, mongo.ErrNoDocuments) {
-					idsInvalid = append(idsInvalid, categotyId.Hex())
+					idsInvalid = append(idsInvalid, categotyEan)
 				} else {
 					return response.New(ctx, http.StatusInternalServerError, err.Error(), true, nil)
 				}
@@ -321,7 +321,7 @@ func (b *book) CreateMany(ctx echo.Context) error {
 		}
 
 		if len(idsInvalid) != 0 {
-			return response.New(ctx, http.StatusBadRequest, "los ids ingresados no son validos", true, idsInvalid)
+			return response.New(ctx, http.StatusBadRequest, "el 'ean' de las categorias ingresados no son validos o no existen", true, idsInvalid)
 		}
 
 		var errs []error
