@@ -13,6 +13,7 @@ func User(storage model.IUser, app *echo.Echo) {
 
 	group := app.Group(env.Data.BaseUrl + "/users")
 	group.PUT("/:id", user.Update)
+	group.PATCH("/personal-information/:id", user.UpdateDataPerson)
 	group.DELETE("/admin", user.DeleteById, middleware.Authorization().Manager)
 	group.POST("/sign-up/:type", user.SignUp)
 	group.POST("/log-in/:type", user.LogIn)
