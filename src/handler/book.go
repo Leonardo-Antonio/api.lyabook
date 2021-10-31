@@ -3,7 +3,6 @@ package handler
 import (
 	"errors"
 	"fmt"
-	"log"
 	"net/http"
 	"strconv"
 
@@ -358,8 +357,6 @@ func (b *book) CreateMany(ctx echo.Context) error {
 		formatting.ReplaceSpecialCharacters(&book.Slug)
 		valid.CreateBook(book)
 		book.FormatBook = "df"
-
-		log.Println(book.Name)
 	}
 
 	result, err := b.storageBook.InsertMany(books)
