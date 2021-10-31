@@ -36,6 +36,19 @@ func NewUser(storage model.IUser) *user {
 	return &user{storage}
 }
 
+func (u *user) SearchById(ctx echo.Context) error {
+	id, err := primitive.ObjectIDFromHex(ctx.Param("id"))
+	if err != nil {
+		return response.New(ctx, http.StatusBadRequest, "el id ingresado no es valido", true, nil)
+	}
+	data, err := u.storage.FindById(id)
+	if err != nil {
+		return response.New(ctx, http.StatusInternalServerError, err.Error(), true, nil)
+	}
+
+	return response.New(ctx, http.StatusOK, "ok", false, data)
+}
+
 func (u *user) SearchDni(ctx echo.Context) error {
 	dni := ctx.Param("dni")
 	if len(dni) != 8 {
@@ -237,7 +250,7 @@ func (u *user) LogIn(ctx echo.Context) error {
 			if errors.Is(err, mongo.ErrNoDocuments) {
 				return response.New(
 					ctx, http.StatusBadRequest,
-					"el usuaio <"+credentials.Email+"> no existe o esta inactivo",
+					"el usuaio <"+credentials.Email+"> no existe o falta validar el correo, para ello debe ingresar a su correo y dar clic al boton 'validar' que se encuentra en el mensaje que se le envío.",
 					true, nil,
 				)
 			}

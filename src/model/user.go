@@ -21,6 +21,7 @@ type (
 	}
 
 	IUser interface {
+		FindById(id primitive.ObjectID) (entity.User, error)
 		Insert(user *entity.User) (*mongo.InsertOneResult, error)
 		Find(credentialsUser *entity.User, flag string) (entity.User, error)
 		VerifyAccount(email, code string) (entity.User, error)
@@ -55,6 +56,20 @@ func (u *user) Insert(user *entity.User) (*mongo.InsertOneResult, error) {
 		return result, err
 	}
 	return result, nil
+}
+
+func (u *user) FindById(id primitive.ObjectID) (entity.User, error) {
+	filter := bson.M{
+		"_id":    id,
+		"active": true,
+	}
+
+	var dataUser entity.User
+	if err := u.collection.FindOne(context.TODO(), filter).Decode(&dataUser); err != nil {
+		return entity.User{}, err
+	}
+
+	return dataUser, nil
 }
 
 func (u *user) Find(credentialsUser *entity.User, flag string) (entity.User, error) {
