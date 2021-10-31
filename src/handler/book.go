@@ -3,6 +3,7 @@ package handler
 import (
 	"errors"
 	"fmt"
+	"log"
 	"net/http"
 	"strconv"
 
@@ -301,7 +302,7 @@ func (b *book) CreateMany(ctx echo.Context) error {
 	if err := ctx.Bind(&books); err != nil {
 		return response.New(
 			ctx, http.StatusBadRequest,
-			"uno de los id de categoria no es valido o el cuerpo de la consulta no es correcta",
+			err.Error(),
 			true, nil,
 		)
 	}
@@ -357,6 +358,8 @@ func (b *book) CreateMany(ctx echo.Context) error {
 		formatting.ReplaceSpecialCharacters(&book.Slug)
 		valid.CreateBook(book)
 		book.FormatBook = "df"
+
+		log.Println(book.Name)
 	}
 
 	result, err := b.storageBook.InsertMany(books)

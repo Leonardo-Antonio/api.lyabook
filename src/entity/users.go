@@ -14,7 +14,7 @@ type User struct {
 	Dni              string             `json:"dni,omitempty" bson:"dni,omitempty" xml:"dni,omitempty"`
 	Email            string             `json:"email,omitempty" bson:"email,omitempty" xml:"email,omitempty"`
 	VerificationCode string             `json:"verification_code,omitempty" bson:"verification_code,omitempty" xml:"verification_code,omitempty"`
-	Password         string             `json:"password,omitempty" bson:"password,omitempty" xml:"password,omitempty" validmor:"string,min=8"`
+	Password         string             `json:"password,omitempty" bson:"password,omitempty" xml:"password,omitempty"`
 	Rol              string             `json:"rol,omitempty" bson:"rol,omitempty" xml:"rol,omitempty"`
 	CreateAt         time.Time          `json:"created_at,omitempty" bson:"created_at,omitempty" xml:"created_at,omitempty"`
 	UpdateAt         time.Time          `json:"updated_at,omitempty" bson:"updated_at,omitempty" xml:"updated_at,omitempty"`
