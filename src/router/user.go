@@ -19,6 +19,7 @@ func User(storage model.IUser, app *echo.Echo) {
 	group.POST("/log-in/:type", user.LogIn)
 	group.POST("/verify", user.VerifyAccount)
 	group.POST("/verification/id/:id/code/:code", user.VerifyAccountById)
+	group.GET("/:id", user.SearchById)
 	group.GET("/roles/admin", user.FindAllUsersByRol, middleware.Authorization().ManagerAndAdmin)
 	group.GET("/count/admin", user.CountByRol)
 	group.GET("/search/reniec/dni/:dni", user.SearchDni)

@@ -147,7 +147,7 @@ func (u *user) SignUp(ctx echo.Context) error {
 		verify := &entity.VerificationAccountAdmin{
 			Name: userData.Name,
 			Link: fmt.Sprintf(
-				"%s/verificacion-cuenta?id=%s&code=%s",
+				"%sverificacion-cuenta?id=%s&code=%s",
 				env.Data.AppClient,
 				userData.Id.Hex(),
 				userData.VerificationCode,
