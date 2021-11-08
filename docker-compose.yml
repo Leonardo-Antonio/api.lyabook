@@ -18,3 +18,4 @@ services:
       TOKEN_API_RENIEC_DNI: ${TOKEN_API_RENIEC_DNI}
     ports:
       - 8000:8000
+      
