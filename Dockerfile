@@ -1,6 +1,6 @@
 FROM golang:1.16-alpine3.14
 
-RUN apk add wkhtmltopdf
+RUN  apk add wkhtmltopdf
 
 WORKDIR /src/
 
