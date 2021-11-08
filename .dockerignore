@@ -29,11 +29,6 @@ yarn-error.log*
 lerna-debug.log*
 .pnpm-debug.log*
 
-
-# Environment
-.env.test
-.env.production
-
 # Serverless directories
 .serverless
 
