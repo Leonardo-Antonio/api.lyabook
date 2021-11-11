@@ -26,6 +26,7 @@ type (
 		InsertMany(books entity.Books) (*mongo.InsertManyResult, error)
 		FindByFormat(format string) (entity.Books, error)
 		FindByStock(stock uint) (entity.Books, error)
+		FindByName(name string) (entity.Book, error)
 		NewBooksOfTheMonth(stock uint) (entity.Books, error)
 	}
 )
@@ -177,6 +178,19 @@ func (b *book) FindByStock(stock uint) (entity.Books, error) {
 	}
 
 	return books, nil
+}
+
+func (b *book) FindByName(name string) (entity.Book, error) {
+	filter := bson.M{
+		"name":   name,
+		"active": true,
+	}
+	var data entity.Book
+	if err := b.collection.FindOne(context.TODO(), filter).Decode(&data); err != nil {
+		return entity.Book{}, err
+	}
+
+	return data, nil
 }
 
 func (b *book) NewBooksOfTheMonth(limit uint) (entity.Books, error) {

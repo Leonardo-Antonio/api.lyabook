@@ -59,6 +59,11 @@ func (p *payment) GetById(id primitive.ObjectID) ([]*entity.PaymentClient, error
 func (p *payment) GetAllBooksSold() (entity.SoldBooks, error) {
 	pipeline := []bson.M{
 		{
+			"$sort": bson.M{
+				"created_at": -1,
+			},
+		},
+		{
 			"$unwind": "$products",
 		},
 		{
@@ -70,6 +75,11 @@ func (p *payment) GetAllBooksSold() (entity.SoldBooks, error) {
 				"books_sold": bson.M{
 					"$sum": "$products.quantity",
 				},
+			},
+		},
+		{
+			"$sort": bson.M{
+				"books_sold": -1,
 			},
 		},
 	}

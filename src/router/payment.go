@@ -10,8 +10,8 @@ import (
 	"github.com/labstack/echo/v4"
 )
 
-func Payment(storage model.IPayment, app *echo.Echo) {
-	handler := handler.NewPayment(storage)
+func Payment(storage model.IPayment, storageBook model.Ibook, app *echo.Echo) {
+	handler := handler.NewPayment(storage, storageBook)
 	group := app.Group(fmt.Sprintf("%s/%s", env.Data.BaseUrl, "payments"))
 	group.GET("/boleta/:id", handler.GetById)
 	group.GET("/reports/books/sold", handler.GetAllBooksSold, middleware.Authorization().Manager)

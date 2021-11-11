@@ -320,7 +320,12 @@ func (u *user) VerifyAccount(ctx echo.Context) error {
 		return response.New(ctx, http.StatusBadRequest, err.Error(), true, nil)
 	}
 
-	if err := send.EmailSignUp(data); err != nil {
+	tpl, err := tmpl.Read("sign-up", nil)
+	if err != nil {
+		return response.New(ctx, http.StatusInternalServerError, err.Error(), true, nil)
+	}
+
+	if err := send.SendMany(tpl, "Bienvenido a lyabook", data.Email); err != nil {
 		return response.New(ctx, http.StatusInternalServerError, err.Error(), true, nil)
 	}
 
@@ -350,7 +355,12 @@ func (u *user) VerifyAccountById(ctx echo.Context) error {
 		return response.New(ctx, http.StatusBadRequest, err.Error(), true, nil)
 	}
 
-	if err := send.EmailSignUp(data); err != nil {
+	tpl, err := tmpl.Read("sign-up", nil)
+	if err != nil {
+		return response.New(ctx, http.StatusInternalServerError, err.Error(), true, nil)
+	}
+
+	if err := send.SendMany(tpl, "Bienvenido a lyabook", data.Email); err != nil {
 		return response.New(ctx, http.StatusInternalServerError, err.Error(), true, nil)
 	}
 
