@@ -63,3 +63,12 @@ func (p *payment) GetById(c echo.Context) error {
 
 	return c.File("reports/boleta.pdf")
 }
+
+func (p *payment) GetAllBooksSold(c echo.Context) error {
+	data, err := p.storage.GetAllBooksSold()
+	if err != nil {
+		return response.New(c, http.StatusInternalServerError, err.Error(), true, nil)
+	}
+
+	return response.New(c, http.StatusOK, "ok", false, data)
+}

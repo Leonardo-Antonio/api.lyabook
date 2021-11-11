@@ -17,6 +17,7 @@ type (
 
 	IPayment interface {
 		GetById(id primitive.ObjectID) ([]*entity.PaymentClient, error)
+		GetAllBooksSold() (entity.SoldBooks, error)
 	}
 )
 
@@ -53,4 +54,36 @@ func (p *payment) GetById(id primitive.ObjectID) ([]*entity.PaymentClient, error
 	}
 
 	return paymentClient, nil
+}
+
+func (p *payment) GetAllBooksSold() (entity.SoldBooks, error) {
+	pipeline := []bson.M{
+		{
+			"$unwind": "$products",
+		},
+		{
+			"$group": bson.M{
+				"_id": "$products.title",
+				"times_sold": bson.M{
+					"$sum": 1,
+				},
+				"books_sold": bson.M{
+					"$sum": "$products.quantity",
+				},
+			},
+		},
+	}
+
+	cursor, err := p.collection.Aggregate(context.TODO(), pipeline)
+	if err != nil {
+		return entity.SoldBooks{}, err
+	}
+	defer cursor.Close(context.TODO())
+
+	var results entity.SoldBooks
+	if err := cursor.All(context.TODO(), &results); err != nil {
+		return entity.SoldBooks{}, err
+	}
+
+	return results, nil
 }
