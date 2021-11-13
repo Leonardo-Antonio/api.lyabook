@@ -3,6 +3,7 @@ package handler
 import (
 	"errors"
 	"net/http"
+	"strconv"
 	"strings"
 	"time"
 
@@ -69,7 +70,11 @@ func (p *payment) GetById(c echo.Context) error {
 }
 
 func (p *payment) GetAllBooksSold(c echo.Context) error {
-	dataBooksSold, err := p.storage.GetAllBooksSold()
+	limit, err := strconv.Atoi(c.Param("limit"))
+	if err != nil {
+		return response.New(c, http.StatusBadRequest, "ingrese un numero", true, nil)
+	}
+	dataBooksSold, err := p.storage.GetAllBooksSold(limit)
 	if err != nil {
 		return response.New(c, http.StatusInternalServerError, err.Error(), true, nil)
 	}
@@ -79,10 +84,11 @@ func (p *payment) GetAllBooksSold(c echo.Context) error {
 		book, err := p.storageBook.FindByName(bookSold.Id)
 		if err != nil {
 			if errors.Is(err, mongo.ErrNoDocuments) {
-				return response.New(c, http.StatusNoContent, err.Error(), true, nil)
+				continue
 			}
 			return response.New(c, http.StatusInternalServerError, err.Error(), true, nil)
 		}
+
 		bookPayment := &entity.BookPayment{
 			SoldBook: *bookSold,
 			Data:     book,

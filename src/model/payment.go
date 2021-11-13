@@ -17,7 +17,7 @@ type (
 
 	IPayment interface {
 		GetById(id primitive.ObjectID) ([]*entity.PaymentClient, error)
-		GetAllBooksSold() (entity.SoldBooks, error)
+		GetAllBooksSold(limit int) (entity.SoldBooks, error)
 	}
 )
 
@@ -56,13 +56,8 @@ func (p *payment) GetById(id primitive.ObjectID) ([]*entity.PaymentClient, error
 	return paymentClient, nil
 }
 
-func (p *payment) GetAllBooksSold() (entity.SoldBooks, error) {
+func (p *payment) GetAllBooksSold(limit int) (entity.SoldBooks, error) {
 	pipeline := []bson.M{
-		{
-			"$sort": bson.M{
-				"created_at": -1,
-			},
-		},
 		{
 			"$unwind": "$products",
 		},
@@ -82,6 +77,11 @@ func (p *payment) GetAllBooksSold() (entity.SoldBooks, error) {
 				"books_sold": -1,
 			},
 		},
+	}
+	if limit != 0 {
+		pipeline = append(pipeline, bson.M{
+			"$limit": limit,
+		})
 	}
 
 	cursor, err := p.collection.Aggregate(context.TODO(), pipeline)

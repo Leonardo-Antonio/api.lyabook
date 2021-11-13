@@ -57,7 +57,7 @@ func (s *server) Routers() {
 	router.Category(model.NewCategoty(db), s.app)
 	router.Book(model.NewBook(db), model.NewUser(db), model.NewCategoty(db), s.app)
 	router.ComplaintsBook(model.NewComplaintsBook(db), s.app)
-	router.Report(model.NewBook(db), s.app)
+	router.Report(model.NewBook(db), model.NewPayment(db), model.NewBook(db), s.app)
 	router.Manager(s.app)
 	router.Payment(model.NewPayment(db), model.NewBook(db), s.app)
 }

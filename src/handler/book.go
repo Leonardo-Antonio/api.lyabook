@@ -3,6 +3,7 @@ package handler
 import (
 	"errors"
 	"fmt"
+	"log"
 	"net/http"
 	"strconv"
 
@@ -247,6 +248,8 @@ func (b *book) AddPromotion(ctx echo.Context) error {
 	for _, email := range users {
 		emails = append(emails, email.Email)
 	}
+
+	log.Println(emails)
 
 	if err := send.Promotion(dataBookPromotion, emails...); err != nil {
 		return response.New(

@@ -18,11 +18,13 @@ import (
 )
 
 type report struct {
-	storage model.Ibook
+	storage        model.Ibook
+	storagePayment model.IPayment
+	storageBook    model.Ibook
 }
 
-func NewReport(storage model.Ibook) *report {
-	return &report{storage}
+func NewReport(storage model.Ibook, storagePayment model.IPayment, storageBook model.Ibook) *report {
+	return &report{storage, storagePayment, storageBook}
 }
 
 func (r *report) AllBooks(ctx echo.Context) error {
@@ -246,4 +248,124 @@ func (r *report) ReportNewBooks(ctx echo.Context) error {
 	return ctx.File(
 		"reports/new-books.pdf",
 	)
+}
+
+func (r *report) BooksSold(c echo.Context) error {
+	dataBooksSold, err := r.storagePayment.GetAllBooksSold(0)
+	if err != nil {
+		return response.New(c, http.StatusInternalServerError, err.Error(), true, nil)
+	}
+
+	var max uint
+	for _, item := range dataBooksSold {
+		if item.BooksSold > max {
+			max = item.BooksSold
+		}
+	}
+
+	var books []*entity.BookPayment
+	for _, bookSold := range dataBooksSold {
+		book, err := r.storageBook.FindByName(bookSold.Id)
+		if err != nil {
+			if errors.Is(err, mongo.ErrNoDocuments) {
+				continue
+			}
+			return response.New(c, http.StatusInternalServerError, err.Error(), true, nil)
+		}
+
+		var tag string
+		if bookSold.BooksSold >= max/2 {
+			tag = "Más vendido"
+		} else {
+			tag = "Menos vendido"
+		}
+
+		bookPayment := &entity.BookPayment{
+			SoldBook:  *bookSold,
+			Data:      book,
+			Tag:       tag,
+			CreatedAt: time.Now().Format(time.RFC1123),
+		}
+		books = append(books, bookPayment)
+	}
+
+	if err := r.GeneratePdf(books, "books-sold.tpl", "books-sold"); err != nil {
+		return response.New(c, http.StatusInternalServerError, err.Error(), true, nil)
+	}
+
+	return c.File(
+		"reports/books-sold.pdf",
+	)
+}
+
+func (r *report) CategoriesSold(c echo.Context) error {
+	dataBooksSold, err := r.storagePayment.GetAllBooksSold(0)
+	if err != nil {
+		return response.New(c, http.StatusInternalServerError, err.Error(), true, nil)
+	}
+
+	var max uint
+	for _, item := range dataBooksSold {
+		if item.BooksSold > max {
+			max = item.BooksSold
+		}
+	}
+
+	var books []*entity.BookPayment
+	for _, bookSold := range dataBooksSold {
+		book, err := r.storageBook.FindByName(bookSold.Id)
+		if err != nil {
+			if errors.Is(err, mongo.ErrNoDocuments) {
+				continue
+			}
+			return response.New(c, http.StatusInternalServerError, err.Error(), true, nil)
+		}
+
+		var tag string
+		if bookSold.BooksSold >= max/2 {
+			tag = "Más vendido"
+		} else {
+			tag = "Menos vendido"
+		}
+
+		bookPayment := &entity.BookPayment{
+			SoldBook:  *bookSold,
+			Data:      book,
+			Tag:       tag,
+			CreatedAt: time.Now().Format(time.RFC1123),
+		}
+		books = append(books, bookPayment)
+	}
+
+	if err := r.GeneratePdf(books, "categories-sold.tpl", "categories-sold"); err != nil {
+		return response.New(c, http.StatusInternalServerError, err.Error(), true, nil)
+	}
+
+	return c.File(
+		"reports/categories-sold.pdf",
+	)
+}
+
+func (r *report) GeneratePdf(data interface{}, nameTpl, namePdf string) error {
+	pdfg, err := wkhtmltopdf.NewPDFGenerator()
+	if err != nil {
+		return err
+	}
+
+	tpl, err := tmpl.Report(nameTpl, data) // time.Now().Format(time.RFC1123)
+	if err != nil {
+		return err
+	}
+	pdfg.AddPage(wkhtmltopdf.NewPageReader(strings.NewReader(tpl)))
+
+	err = pdfg.Create()
+	if err != nil {
+		return err
+	}
+
+	err = pdfg.WriteFile(fmt.Sprintf("reports/%s.pdf", namePdf))
+	if err != nil {
+		return err
+	}
+	return nil
 }
