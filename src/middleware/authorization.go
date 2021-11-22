@@ -1,6 +1,7 @@
 package middleware
 
 import (
+	"log"
 	"net/http"
 	"strings"
 
@@ -27,6 +28,11 @@ func (a *auth) Admin(f echo.HandlerFunc) echo.HandlerFunc {
 				true, nil,
 			)
 		}
+
+		log.Println("********************")
+		log.Println(claimUser.Rol)
+		log.Println(enum.Rol.Admin)
+		log.Println("********************")
 
 		if !strings.EqualFold(claimUser.Rol, enum.Rol.Admin) {
 			return response.New(
@@ -74,6 +80,11 @@ func (a *auth) Manager(f echo.HandlerFunc) echo.HandlerFunc {
 			)
 		}
 
+		log.Println("********************")
+		log.Println(claimUser.Rol)
+		log.Println(enum.Rol.Manager)
+		log.Println("********************")
+
 		if !strings.EqualFold(claimUser.Rol, enum.Rol.Manager) {
 			return response.New(
 				ctx, http.StatusUnauthorized,
@@ -97,7 +108,7 @@ func (a *auth) ManagerAndAdmin(f echo.HandlerFunc) echo.HandlerFunc {
 			)
 		}
 
-		if strings.EqualFold(claimUser.Rol, enum.Rol.Manager) || strings.EqualFold(claimUser.Rol, enum.Rol.Admin) {
+		if !strings.EqualFold(claimUser.Rol, enum.Rol.Client) {
 			return f(ctx)
 
 		}
