@@ -48,7 +48,7 @@
             <tbody>
                 {{ range . }}
                 <tr>
-                    <td><a href="http://localhost:3000/libros/{{.Data.Slug}}">{{ .Data.Name }}</a></td>
+                    <td><a href="https://lyabook.hostman.site/libros/{{.Data.Slug}}">{{ .Data.Name }}</a></td>
                     <td class="text-center py-2">{{ .SoldBook.TimesSold }}</td>
                     <td class="text-center py-2">{{ .SoldBook.BooksSold }}</td>
                     <td class="text-center py-2">{{ .Data.FormatBook }}</td>
