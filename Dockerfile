@@ -1,6 +1,6 @@
-FROM golang:1.16-alpine3.14
+FROM golang:1.17.2
 
-RUN apk add wkhtmltopdf
+RUN apt update && apt install -y wkhtmltopdf
 
 WORKDIR /src/
 
