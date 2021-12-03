@@ -44,6 +44,7 @@ lerna-debug.log*
 
 # Certificates
 /certificate/app.rsa
+/certificate/*
 /certificate/app.rsa.pub
 /certificate/ca-certificate.crt
 
