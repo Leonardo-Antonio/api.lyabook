@@ -2,7 +2,7 @@ version: "3"
 
 services:
   api-lyabook-admin:
-    image: leo2001/api.lyabook:v3
+    image: leo2001/api.lyabook:v4
     restart: always
     environment:
       BASE_URI: ${BASE_URI}
