@@ -1,0 +1,20 @@
+version: "3"
+
+services:
+  api-lyabook-admin:
+    image: leo2001/api.lyabook:v3
+    restart: always
+    environment:
+      BASE_URI: ${BASE_URI}
+      APP_CLIENT: ${APP_CLIENT}
+      URL_MONGO: ${URL_MONGO}
+      DB_NAME: ${DB_NAME}
+      SECRET_KEY: ${SECRET_KEY}
+      PORT: ${PORT}
+      EMAIL: ${EMAIL}
+      PASSWORD_EMAIL: ${PASSWORD_EMAIL}
+      API_RENIEC_DNI: ${API_RENIEC_DNI}
+      TOKEN_API_RENIEC_DNI: ${TOKEN_API_RENIEC_DNI}
+    ports:
+      - 8000:8000
+      
